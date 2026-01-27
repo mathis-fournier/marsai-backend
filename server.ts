@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const testRoutes = require("./routes/test.routes");
 const eventsRoutes = require("./routes/events.routes");
+const movieRoutes = require("./routes/movies.routes");
 
 app.use(express.json());
 app.use(
@@ -22,6 +23,7 @@ app.get("/example", (req: Request, res: Response) => {
 
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
+app.use("/addMovie", movieRoutes);
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
