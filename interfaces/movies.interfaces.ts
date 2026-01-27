@@ -13,5 +13,4 @@ export interface Movie {
   hasSubs?: boolean;
   srt?: string | null;
   status?: "Pending" | "Cancelled" | "Accepted";
-  user_id: number;
 }
