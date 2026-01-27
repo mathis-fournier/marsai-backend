@@ -1,10 +1,11 @@
 import mysql from "mysql2";
 
-
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
 if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
-  console.error("Missing required environment variables for database connection.");
+  console.error(
+    "Missing required environment variables for database connection.",
+  );
   process.exit(1);
 }
 
@@ -22,10 +23,6 @@ connection.connect((error) => {
     return;
   }
   console.log("Connecté à la base de données MySQL");
-
 });
 
 module.exports = connection;
-
-
-
