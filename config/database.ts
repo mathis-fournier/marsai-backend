@@ -2,7 +2,7 @@ import mysql from "mysql2";
 
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
-if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
+if (!DB_HOST || !DB_USER || !DB_NAME) {
   console.error(
     "Missing required environment variables for database connection.",
   );
@@ -10,10 +10,10 @@ if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
 }
 
 const connection = mysql.createConnection({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_NAME,
+  host: DB_HOST as string,
+  user: DB_USER as string,
+  password: DB_PASSWORD as string,
+  database: DB_NAME as string,
 });
 
 // Test de connexion
