@@ -173,6 +173,3 @@ CREATE TABLE role_user (
 );
 
 SET FOREIGN_KEY_CHECKS = 1;
-
--- Insertion des rôles
-INSERT INTO role (name) VALUES ('ADMIN'), ('JURY');
