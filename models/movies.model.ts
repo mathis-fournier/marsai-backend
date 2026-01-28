@@ -15,7 +15,20 @@ const getAllMovies = (callback: (err: any, results: any) => void) => {
   });
 };
 const getBestMovies = (callback: (err: any, results: any) => void) => {
-  const query = "SELECT * FROM movie ORDER BY rating DESC LIMIT 3";
+  const query = `
+    SELECT
+      m.*,
+      AVG(r.note) AS average_rating
+    FROM
+      movie AS m
+    JOIN
+      rating AS r ON m.id = r.movie_id
+    GROUP BY
+      m.id
+    ORDER BY
+      average_rating DESC
+    LIMIT 3
+  `;
   db.query(query, (err: any, results: any) => {
     callback(err, results);
   });
