@@ -23,7 +23,7 @@ app.get("/example", (req: Request, res: Response) => {
 
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
-app.use("/addMovie", movieRoutes);
+app.use("/movies", movieRoutes);
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
