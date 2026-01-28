@@ -31,7 +31,7 @@ CREATE TABLE Movie (
     id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
     original_title VARCHAR(255) NOT NULL,
     english_title VARCHAR(255) NOT NULL,
-    submitted_at DATETIME NOT NULL,
+    submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     youtube_url VARCHAR(255) NOT NULL UNIQUE,
     cover_image VARCHAR(255) NOT NULL,
     duration INT NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE Movie (
     english_synopsis TEXT NOT NULL,
     creative_process TEXT NOT NULL,
     ia_tools TEXT NOT NULL,
-    hasSubs BOOLEAN NOT NULL,
+    hasSubs BOOLEAN NOT NULL DEFAULT 0,
     srt VARCHAR(255),
     status ENUM('Pending', 'Cancelled', 'Accepted')
 );
