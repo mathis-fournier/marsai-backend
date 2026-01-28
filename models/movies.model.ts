@@ -8,4 +8,17 @@ const postMovie = (data: Movie, callback: (err: any, results: any) => void) => {
   });
 };
 
-module.exports = { postMovie };
+const getAllMovies = (callback: (err: any, results: any) => void) => {
+  const query = "SELECT * FROM movie";
+  db.query(query, (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+const getBestMovies = (callback: (err: any, results: any) => void) => {
+  const query = "SELECT * FROM movie ORDER BY rating DESC LIMIT 3";
+  db.query(query, (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+module.exports = { postMovie, getAllMovies, getBestMovies };
+  

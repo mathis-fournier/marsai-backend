@@ -12,8 +12,8 @@ const addMovie = (req: Request, res: Response) => {
     youtube_url: req.body.youtube_url,
     cover_image:
       file ??
-      "https://media.newyorker.com/photos/68c1f35c33ed00be6a5dd57f/4:3/w_2276,h_1707,c_limit/NL-CHARLIE_KIRK-AP25253709556517.jpg",
-    duration: parseInt(req.body.duration),
+      "/batman.png",
+      duration: parseInt(req.body.duration),
     isHybrid: req.body.isHybrid === "true" || req.body.isHybrid === true,
     original_language: req.body.original_language,
     original_synopsis: req.body.original_synopsis,
@@ -29,10 +29,30 @@ const addMovie = (req: Request, res: Response) => {
     }
     res
       .status(201)
-      .json({ message: "Film ajouter avec succès", id: results.insertId });
+      .json({ message: "Film ajouté avec succès", id: results.insertId });
   });
 };
 
+const getAllMovies = (req: Request, res: Response) => {
+  movieModel.getAllMovies((err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
+  });
+};
+
+ const getBestMovies = (req: Request, res: Response) => {
+   movieModel.getBestMovies((err: any, results: any) => {
+     if (err) {
+       console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+       return res.status(500).json({ error: "Database error: " + err.message });
+     }
+     res.status(200).json(results);
+   });
+ };
+
 module.exports = {
-  addMovie,
+  addMovie, getAllMovies, getBestMovies
 };
