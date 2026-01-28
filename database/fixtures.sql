@@ -109,3 +109,4 @@ INSERT INTO Booking (id, participant_id, event_id) VALUES
 (3, 1, 2),
 (4, 3, 1),
 (5, 3, 3);
+
