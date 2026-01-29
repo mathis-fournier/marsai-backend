@@ -14,6 +14,7 @@ const getAllMovies = (callback: (err: any, results: any) => void) => {
     callback(err, results);
   });
 };
+
 const getBestMovies = (callback: (err: any, results: any) => void) => {
   const query = `
     SELECT
@@ -27,7 +28,7 @@ const getBestMovies = (callback: (err: any, results: any) => void) => {
       m.id
     ORDER BY
       average_rating DESC
-    LIMIT 3
+    LIMIT 4
   `;
   db.query(query, (err: any, results: any) => {
     callback(err, results);
