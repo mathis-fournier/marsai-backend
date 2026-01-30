@@ -7,4 +7,4 @@ const deleteEvent = (data: any, callback: (err: any, results: any) => void) => {
   });
 };
 
-module.exports = { deleteEvent };
+export default { deleteEvent };
