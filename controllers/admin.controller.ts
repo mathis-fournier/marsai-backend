@@ -1,7 +1,7 @@
 const db = require("../config/database");
 import { Request, Response } from "express";
 
-const adminModel = require("../models/admin.model");
+import adminModel from "../models/admin.model";
 
 const deleteEvent = (req: Request, res: Response) => {
   const id = req.body.id;
