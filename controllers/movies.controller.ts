@@ -10,10 +10,8 @@ const addMovie = (req: Request, res: Response) => {
     original_title: req.body.original_title,
     english_title: req.body.english_title,
     youtube_url: req.body.youtube_url,
-    cover_image:
-      file ??
-      "/batman.png",
-      duration: parseInt(req.body.duration),
+    cover_image: file ?? "/batman.png",
+    duration: parseInt(req.body.duration),
     isHybrid: req.body.isHybrid === "true" || req.body.isHybrid === true,
     original_language: req.body.original_language,
     original_synopsis: req.body.original_synopsis,
@@ -43,16 +41,18 @@ const getAllMovies = (req: Request, res: Response) => {
   });
 };
 
- const getBestMovies = (req: Request, res: Response) => {
-   movieModel.getBestMovies((err: any, results: any) => {
-     if (err) {
-       console.error("ERREUR SQL DÉTAILLÉE :", err.message);
-       return res.status(500).json({ error: "Database error: " + err.message });
-     }
-     res.status(200).json(results);
-   });
- };
+const getBestMovies = (req: Request, res: Response) => {
+  movieModel.getBestMovies((err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
+  });
+};
 
-module.exports = {
-  addMovie, getAllMovies, getBestMovies
+export default {
+  addMovie,
+  getAllMovies,
+  getBestMovies,
 };
