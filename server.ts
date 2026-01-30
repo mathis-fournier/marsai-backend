@@ -8,6 +8,7 @@ const cors = require("cors");
 const testRoutes = require("./routes/test.routes");
 const eventsRoutes = require("./routes/events.routes");
 const movieRoutes = require("./routes/movies.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 app.use(express.json());
 const whitelist = [process.env.FRONT_URL];
@@ -24,11 +25,14 @@ const corsOptions = {
     }
 
     // Autoriser les adresses IP locales pour le développement mobile
-    if (origin.startsWith('http://localhost') || origin.startsWith('http://192.168.')) {
+    if (
+      origin.startsWith("http://localhost") ||
+      origin.startsWith("http://192.168.")
+    ) {
       return callback(null, true);
     }
 
-    callback(new Error('Not allowed by CORS'));
+    callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
 };
@@ -42,6 +46,7 @@ app.get("/example", (req: Request, res: Response) => {
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
+app.use("/admin", adminRoutes);
 
 // Démarrage du serveur
 const PORT = process.env.PORT || 3000;
