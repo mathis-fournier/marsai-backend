@@ -8,7 +8,10 @@ import movieRoutes from "./routes/movies.routes";
 import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
 
-const app: Application = express();
+const testRoutes = require("./routes/test.routes");
+const eventsRoutes = require("./routes/events.routes");
+const movieRoutes = require("./routes/movies.routes");
+const adminRoutes = require("./routes/admin.routes");
 
 app.use(express.json());
 
@@ -26,7 +29,7 @@ const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
-    // Allow local IP addresses for mobile development
+    // Autoriser les adresses IP locales pour le développement mobile
     if (
       origin.startsWith("http://localhost") ||
       origin.startsWith("http://192.168.")
@@ -48,6 +51,7 @@ app.get("/example", (req: Request, res: Response) => {
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
+app.use("/admin", adminRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;
