@@ -12,6 +12,6 @@ const test = (req: Request, res: Response) => {
   });
 };
 
-module.exports = {
+export default {
   test,
 };

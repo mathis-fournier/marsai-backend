@@ -1,9 +1,12 @@
-require("dotenv").config();
-require("./config/database");
-import express, { Request, Response } from "express";
+import "dotenv/config";
+import "./config/database";
+import express, { Request, Response, Application } from "express";
+import cors, { CorsOptions } from "cors";
 
-const app = express();
-const cors = require("cors");
+// Import Routes
+import movieRoutes from "./routes/movies.routes";
+import testRoutes from "./routes/test.routes";
+import eventsRoutes from "./routes/events.routes";
 
 const testRoutes = require("./routes/test.routes");
 const eventsRoutes = require("./routes/events.routes");
@@ -11,16 +14,18 @@ const movieRoutes = require("./routes/movies.routes");
 const adminRoutes = require("./routes/admin.routes");
 
 app.use(express.json());
-const whitelist = [process.env.FRONT_URL];
-const corsOptions = {
-  origin: (origin: any, callback: any) => {
-    // Autoriser les requêtes sans origin (comme Postman ou les apps mobiles)
+
+const whitelist: (string | undefined)[] = [process.env.FRONT_URL];
+
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like Postman or mobile apps)
     if (!origin) {
       return callback(null, true);
     }
 
-    // Vérifier si l'origine est dans la whitelist
-    if (whitelist.indexOf(origin) !== -1) {
+    // Check if origin is in whitelist
+    if (whitelist.includes(origin)) {
       return callback(null, true);
     }
 
@@ -48,7 +53,7 @@ app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
 app.use("/admin", adminRoutes);
 
-// Démarrage du serveur
+// Server setup
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
