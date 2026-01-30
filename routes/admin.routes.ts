@@ -1,8 +1,8 @@
-import express, { Request, Response } from "express";
-const router = express.Router();
+import { Router } from "express";
+import adminController from "../controllers/admin.controller";
 
-const adminController = require("../controllers/admin.controller");
+const router = Router();
 
 router.delete("/event", adminController.deleteEvent);
 
-module.exports = router;
+export default router;

@@ -7,11 +7,9 @@ import cors, { CorsOptions } from "cors";
 import movieRoutes from "./routes/movies.routes";
 import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
+import adminRoutes from "./routes/admin.routes";
 
-const testRoutes = require("./routes/test.routes");
-const eventsRoutes = require("./routes/events.routes");
-const movieRoutes = require("./routes/movies.routes");
-const adminRoutes = require("./routes/admin.routes");
+const app = express();
 
 app.use(express.json());
 

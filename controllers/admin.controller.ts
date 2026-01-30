@@ -13,6 +13,6 @@ const deleteEvent = (req: Request, res: Response) => {
   });
 };
 
-module.exports = {
+export default {
   deleteEvent,
 };
