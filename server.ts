@@ -7,6 +7,7 @@ import cors, { CorsOptions } from "cors";
 import movieRoutes from "./routes/movies.routes";
 import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
+import usersRoutes from "./routes/users.routes";
 import adminRoutes from "./routes/admin.routes";
 
 const app = express();
@@ -49,6 +50,7 @@ app.get("/example", (req: Request, res: Response) => {
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
+app.use("/users", usersRoutes);
 app.use("/admin", adminRoutes);
 
 // Server setup
