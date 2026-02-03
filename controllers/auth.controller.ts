@@ -48,12 +48,12 @@ const loginUser = (req: any, res: any) => {
         const token = jsonwebtoken.sign( { userId: user.id, role: user.role }, (process.env.JWT_SECRET as string).trim(), { expiresIn: "1h" });
 
         // SUCCESSFUL LOGIN
-        res.status(200).json({ token });
+        res.status(200).json({ token, user });
     });
 }
 
 const getMe = (req: any, res: any) => {
-    Users.getUserById (req.user.id, (error: Error, results: any) => {
+    Users.getUserById (req.user.userId, (error: Error, results: any) => {
         if (error) {
             return res.status(500).send("Erreur serveur");
         }
