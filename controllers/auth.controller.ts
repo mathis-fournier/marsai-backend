@@ -61,4 +61,5 @@ const getMe = (req: any, res: any) => {
     });
 };
 
+
 export default { addUser, loginUser, getMe };

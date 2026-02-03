@@ -23,7 +23,7 @@ const getUserByEmail = (email: string, callback: Function) => {
     });
 };
 
-const getUserById = (id: number, callback: Function) => {
+const getUserById = (id: string | string[] | undefined, callback: Function) => {
     const query = `
         SELECT u.firstname, u.lastname, u.email, r.name as role
         FROM user u
