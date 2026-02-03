@@ -14,4 +14,4 @@ const getOne = (data: any, callback: (err: any, results: any) => void) => {
   });
 };
 
-module.exports = { getAll, getOne };
+export default { getAll, getOne };

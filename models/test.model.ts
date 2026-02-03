@@ -7,4 +7,4 @@ const test = (callback: (err: any, results: any) => void) => {
   });
 };
 
-module.exports = { test };
+export default { test };
