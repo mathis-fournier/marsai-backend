@@ -70,11 +70,11 @@ INSERT INTO subscriber (email, created_at) VALUES
 
 -- Fixtures for Movie table
 INSERT INTO movie (original_title, english_title, youtube_url, cover_image, duration, is_hybrid, original_language, original_synopsis, english_synopsis, creative_process, ia_tools, has_subs, srt, status) VALUES
-('Le Voyage Imaginaire', 'The Imaginary Journey', 'https://www.youtube.com/watch?v=video1', '/images/cover1.jpg', 120, 1, 'French', 'Un voyage incroyable...', 'An incredible journey...', 'Lots of AI tools were used.', 'Midjourney, RunwayML', 1, '/subs/sub1.srt', 'Accepted'),
-('The Last Stand', 'The Last Stand', 'https://www.youtube.com/watch?v=video2', '/images/cover2.jpg', 95, 0, 'English', 'The final battle for humanity.', 'The final battle for humanity.', 'A mix of traditional and AI techniques.', 'DALL-E 2, Stable Diffusion', 0, NULL, 'Pending'),
-('El Sueño Perdido', 'The Lost Dream', 'https://www.youtube.com/watch?v=video3', '/images/cover3.jpg', 110, 1, 'Spanish', 'Una historia de esperanza y desesperación.', 'A story of hope and despair.', 'Entirely AI-generated visuals.', 'Artbreeder, DeepMotion', 1, '/subs/sub3.srt', 'Accepted'),
-('Tokyo Drift', 'Tokyo Drift', 'https://www.youtube.com/watch?v=video4', '/images/cover4.jpg', 100, 0, 'Japanese', 'Fast cars and neon lights.', 'Fast cars and neon lights.', 'Traditional animation with AI assistance for backgrounds.', 'Photoshop, Blender', 1, '/subs/sub4.srt', 'Pending'),
-('Die Ewigkeit', 'Eternity', 'https://www.youtube.com/watch?v=video5', '/images/cover5.jpg', 130, 1, 'German', 'Eine philosophische Reise durch die Zeit.', 'A philosophical journey through time.', 'AI-driven narrative generation.', 'GPT-3, Synthesia', 0, NULL, 'Cancelled');
+('Le Voyage Imaginaire', 'The Imaginary Journey', 'https://www.youtube.com/watch?v=video1', '/batman.png', 120, 1, 'French', 'Un voyage incroyable...', 'An incredible journey...', 'Lots of AI tools were used.', 'Midjourney, RunwayML', 1, '/subs/sub1.srt', 'Accepted'),
+('The Last Stand', 'The Last Stand', 'https://www.youtube.com/watch?v=video2', '/batman.png', 95, 0, 'English', 'The final battle for humanity.', 'The final battle for humanity.', 'A mix of traditional and AI techniques.', 'DALL-E 2, Stable Diffusion', 0, NULL, 'Pending'),
+('El Sueño Perdido', 'The Lost Dream', 'https://www.youtube.com/watch?v=video3', '/batman.png', 110, 1, 'Spanish', 'Una historia de esperanza y desesperación.', 'A story of hope and despair.', 'Entirely AI-generated visuals.', 'Artbreeder, DeepMotion', 1, '/subs/sub3.srt', 'Accepted'),
+('Tokyo Drift', 'Tokyo Drift', 'https://www.youtube.com/watch?v=video4', '/batman.png', 100, 0, 'Japanese', 'Fast cars and neon lights.', 'Fast cars and neon lights.', 'Traditional animation with AI assistance for backgrounds.', 'Photoshop, Blender', 1, '/subs/sub4.srt', 'Pending'),
+('Die Ewigkeit', 'Eternity', 'https://www.youtube.com/watch?v=video5', '/batman.png', 130, 1, 'German', 'Eine philosophische Reise durch die Zeit.', 'A philosophical journey through time.', 'AI-driven narrative generation.', 'GPT-3, Synthesia', 0, NULL, 'Cancelled');
 
 -- Fixtures for Tag table
 INSERT INTO tag (name) VALUES
