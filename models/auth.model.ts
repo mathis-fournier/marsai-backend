@@ -24,7 +24,13 @@ const getUserByEmail = (email: string, callback: Function) => {
 };
 
 const getUserById = (id: number, callback: Function) => {
-    const query = 'SELECT * FROM user WHERE id = ?';
+    const query = `
+        SELECT u.firstname, u.lastname, u.email, r.name as role
+        FROM user u
+        LEFT JOIN role_user ru ON u.id = ru.user_id
+        LEFT JOIN role r ON ru.role_id = r.id
+        WHERE u.id = ?
+    `;
     db.query(query, [id], (error: Error, results: any) => {
         if (error) {
             return callback(error, null);
