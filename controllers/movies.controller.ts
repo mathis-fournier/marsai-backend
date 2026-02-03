@@ -1,8 +1,7 @@
 const db = require("../config/database");
 import { Request, Response } from "express";
 import { Movie } from "../interfaces/movies.interfaces";
-
-const movieModel = require("../models/movies.model");
+import movieModel from "../models/movies.model";
 
 const addMovie = (req: Request, res: Response) => {
   const file = (req as any).file;
@@ -51,8 +50,22 @@ const getBestMovies = (req: Request, res: Response) => {
   });
 };
 
+const getMoviesSum = (req: Request, res: Response) => {
+  console.log("test");
+  movieModel.getMoviesSum((err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    const responseData =
+      results && results.length > 0 ? results[0] : { total: 0 };
+    res.json(responseData);
+  });
+};
+
 export default {
   addMovie,
   getAllMovies,
   getBestMovies,
+  getMoviesSum,
 };

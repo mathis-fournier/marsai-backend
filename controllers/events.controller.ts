@@ -1,7 +1,6 @@
 const db = require("../config/database");
 import { Request, Response } from "express";
-
-const eventsModel = require("../models/events.model");
+import eventsModel from "../models/events.model";
 
 const getAll = (req: Request, res: Response) => {
   eventsModel.getAll((err: any, results: any) => {
