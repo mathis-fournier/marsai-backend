@@ -4,5 +4,6 @@ import eventsController from "../controllers/events.controller";
 const router = Router();
 
 router.get("/all", eventsController.getAll);
+router.get("/:id", eventsController.getOne);
 
 export default router;
