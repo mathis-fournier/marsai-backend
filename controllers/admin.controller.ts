@@ -4,7 +4,7 @@ import { Request, Response } from "express";
 import adminModel from "../models/admin.model";
 
 const deleteEvent = (req: Request, res: Response) => {
-  const id = req.body.id;
+  const { id } = req.params;
   adminModel.deleteEvent(id, (err: any, results: any) => {
     if (err) {
       return res.status(500).json({ error: err.message });
