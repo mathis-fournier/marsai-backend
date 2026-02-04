@@ -14,4 +14,15 @@ const getOne = (data: any, callback: (err: any, results: any) => void) => {
   });
 };
 
-export default { getAll, getOne };
+const getParticipantSum = (callback: (err: any, results: any) => void) => {
+  const query = "SELECT COUNT(*) as total FROM participant";
+  db.query(query, (err: any, results: any) => {
+    if (err) {
+      return callback(err, null);
+    }
+    const total = results[0].total;
+    callback(null, total);
+  });
+};
+
+export default { getAll, getOne, getParticipantSum };
