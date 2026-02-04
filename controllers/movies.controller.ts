@@ -2,6 +2,7 @@ const db = require("../config/database");
 import { Request, Response } from "express";
 import { Movie } from "../interfaces/movies.interfaces";
 import movieModel from "../models/movies.model";
+import { error } from "node:console";
 
 const addMovie = (req: Request, res: Response) => {
   const file = (req as any).file;
@@ -9,7 +10,7 @@ const addMovie = (req: Request, res: Response) => {
     original_title: req.body.original_title,
     english_title: req.body.english_title,
     youtube_url: req.body.youtube_url,
-    cover_image: file ?? "/batman.png",
+    cover_image: file ?? "/assets/batman.png",
     duration: parseInt(req.body.duration),
     isHybrid: req.body.isHybrid === "true" || req.body.isHybrid === true,
     original_language: req.body.original_language,

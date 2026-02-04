@@ -9,6 +9,7 @@ import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
+import subscribersRoutes from "./routes/subscribers.routes";
 
 const app = express();
 
@@ -43,18 +44,16 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
-app.get("/example", (req: Request, res: Response) => {
-  res.json({ status: "ok" });
-});
-
 app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+app.use("/newsletter", subscribersRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -36,5 +36,4 @@ const getMoviesSum = (callback: (err: any, results: any) => void) => {
   });
 };
 
-// This matches your current code
 export default { postMovie, getAllMovies, getBestMovies, getMoviesSum };
