@@ -8,9 +8,13 @@ const postMovie = (data: Movie, callback: (err: any, results: any) => void) => {
   });
 };
 
-const getAllMovies = (callback: (err: any, results: any) => void) => {
-  const query = "SELECT * FROM movie";
-  db.query(query, (err: any, results: any) => {
+const getAllMovies = (
+  limit: number,
+  offset: number,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM movie LIMIT ? OFFSET ?";
+  db.query(query, [limit, offset], (err: any, results: any) => {
     callback(err, results);
   });
 };
@@ -32,7 +36,11 @@ const getBestMovies = (callback: (err: any, results: any) => void) => {
 const getMoviesSum = (callback: (err: any, results: any) => void) => {
   const query = "SELECT COUNT(*) as total FROM movie";
   db.query(query, (err: any, results: any) => {
-    callback(err, results);
+    if (err) {
+      return callback(err, null);
+    }
+    const total = results[0].total;
+    callback(null, total);
   });
 };
 

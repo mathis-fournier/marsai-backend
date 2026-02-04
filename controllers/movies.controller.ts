@@ -2,7 +2,6 @@ const db = require("../config/database");
 import { Request, Response } from "express";
 import { Movie } from "../interfaces/movies.interfaces";
 import movieModel from "../models/movies.model";
-import { error } from "node:console";
 
 const addMovie = (req: Request, res: Response) => {
   const file = (req as any).file;
@@ -32,7 +31,11 @@ const addMovie = (req: Request, res: Response) => {
 };
 
 const getAllMovies = (req: Request, res: Response) => {
-  movieModel.getAllMovies((err: any, results: any) => {
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 10;
+  const offset = (page - 1) * limit;
+
+  movieModel.getAllMovies(limit, offset, (err: any, results: any) => {
     if (err) {
       console.error("ERREUR SQL DÉTAILLÉE :", err.message);
       return res.status(500).json({ error: "Database error: " + err.message });
@@ -52,15 +55,13 @@ const getBestMovies = (req: Request, res: Response) => {
 };
 
 const getMoviesSum = (req: Request, res: Response) => {
-  console.log("test");
-  movieModel.getMoviesSum((err: any, results: any) => {
+  movieModel.getMoviesSum((err: any, total: any) => {
     if (err) {
-      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
-      return res.status(500).json({ error: "Database error: " + err.message });
+      return res.status(500).json({
+        error: "Erreur de base de données lors de la récupération du total.",
+      });
     }
-    const responseData =
-      results && results.length > 0 ? results[0] : { total: 0 };
-    res.json(responseData);
+    res.json({ total });
   });
 };
 
