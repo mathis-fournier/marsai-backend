@@ -28,7 +28,6 @@ const getParticipantSum = (req: Request, res: Response) => {
         error: "Erreur de base de données lors de la récupération du total.",
       });
     }
-    console.log("controller end");
     res.json({ total });
   });
 };
