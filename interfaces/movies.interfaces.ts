@@ -4,13 +4,13 @@ export interface Movie {
   youtube_url: string;
   cover_image: string;
   duration: number;
-  isHybrid: boolean;
+  is_hybrid: boolean;
   original_language: string;
   original_synopsis: string;
   english_synopsis: string;
   creative_process: string;
   ia_tools: string;
-  hasSubs?: boolean;
+  has_subs?: boolean;
   srt?: string | null;
   status?: "Pending" | "Cancelled" | "Accepted";
 }

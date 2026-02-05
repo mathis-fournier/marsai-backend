@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "./config/database";
 import express, { Request, Response, Application } from "express";
+import path from "path";
 import cors, { CorsOptions } from "cors";
 
 // Import Routes
@@ -50,6 +51,7 @@ app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/newsletter", subscribersRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Server setup
 const PORT = process.env.PORT || 3000;

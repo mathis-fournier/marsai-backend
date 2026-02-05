@@ -11,13 +11,13 @@ const addMovie = (req: Request, res: Response) => {
     youtube_url: req.body.youtube_url,
     cover_image: file ?? "/assets/batman.png",
     duration: parseInt(req.body.duration),
-    isHybrid: req.body.isHybrid === "true" || req.body.isHybrid === true,
+    is_hybrid: req.body.isHybrid === "true" || req.body.isHybrid === true,
     original_language: req.body.original_language,
     original_synopsis: req.body.original_synopsis,
     english_synopsis: req.body.english_synopsis,
     creative_process: req.body.creative_process,
     ia_tools: req.body.ia_tools,
-    hasSubs: req.body.hasSubs === "true" || req.body.hasSubs === true,
+    has_subs: req.body.hasSubs === "true" || req.body.hasSubs === true,
   };
   movieModel.postMovie(newMovie, (err: any, results: any) => {
     if (err) {
