@@ -44,4 +44,21 @@ const getMoviesSum = (callback: (err: any, results: any) => void) => {
   });
 };
 
-export default { postMovie, getAllMovies, getBestMovies, getMoviesSum };
+const getDirectorsSum = (callback: (err: any, results: any) => void) => {
+  const query = "SELECT COUNT(*) as total FROM collaborator";
+  db.query(query, (err: any, results: any) => {
+    if (err) {
+      return callback(err, null);
+    }
+    const total = results[0].total;
+    callback(null, total);
+  });
+};
+
+export default {
+  postMovie,
+  getAllMovies,
+  getBestMovies,
+  getMoviesSum,
+  getDirectorsSum,
+};
