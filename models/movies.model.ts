@@ -88,6 +88,7 @@ const getMovieTags = (
     callback(err, results);
   });
 };
+
 const getDirectorsSum = (callback: (err: any, results: any) => void) => {
   const query = "SELECT COUNT(*) as total FROM collaborator";
   db.query(query, (err: any, results: any) => {
