@@ -10,6 +10,7 @@ import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import subscribersRoutes from "./routes/subscribers.routes";
+import juryRoutes from "./routes/jury.routes";
 
 const app = express();
 
@@ -50,6 +51,7 @@ app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/newsletter", subscribersRoutes);
+app.use("/jury", juryRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;

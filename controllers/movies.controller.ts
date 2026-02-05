@@ -65,9 +65,21 @@ const getMoviesSum = (req: Request, res: Response) => {
   });
 };
 
+const getDirectorsSum = (req: Request, res: Response) => {
+  movieModel.getDirectorsSum((err: any, total: any) => {
+    if (err) {
+      return res.status(500).json({
+        error: "Erreur de base de données lors de la récupération du total.",
+      });
+    }
+    res.json({ total });
+  });
+};
+
 export default {
   addMovie,
   getAllMovies,
   getBestMovies,
   getMoviesSum,
+  getDirectorsSum,
 };

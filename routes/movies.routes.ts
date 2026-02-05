@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/", movieController.getAllMovies);
 router.get("/count", movieController.getMoviesSum);
+router.get("/directors/count", movieController.getDirectorsSum);
 router.get("/best", movieController.getBestMovies);
 
 router.post("/", movieController.addMovie);
