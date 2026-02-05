@@ -1,6 +1,7 @@
 import "dotenv/config";
 import "./config/database";
 import express, { Request, Response, Application } from "express";
+import path from "path";
 import cors, { CorsOptions } from "cors";
 
 // Import Routes
@@ -10,6 +11,7 @@ import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import subscribersRoutes from "./routes/subscribers.routes";
+import juryRoutes from "./routes/jury.routes";
 
 const app = express();
 
@@ -50,6 +52,8 @@ app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
 app.use("/newsletter", subscribersRoutes);
+app.use("/jury", juryRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // Server setup
 const PORT = process.env.PORT || 3000;
