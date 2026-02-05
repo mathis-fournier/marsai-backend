@@ -44,4 +44,58 @@ const getMoviesSum = (callback: (err: any, results: any) => void) => {
   });
 };
 
-export default { postMovie, getAllMovies, getBestMovies, getMoviesSum };
+const getMovieDetails = (
+  movieId: number | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM movie m WHERE m.id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieCollaborators = (
+  movieId: number | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM collaborator WHERE movie_id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieRatings = (
+  movieId: number,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM rating WHERE movie_id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieTags = (
+  movieId: number,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = `
+    SELECT t.name
+    FROM movie_tag mt
+    JOIN tag t ON mt.tag_id = t.id
+    WHERE mt.movie_id = ?
+  `;
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+export default {
+  postMovie,
+  getAllMovies,
+  getBestMovies,
+  getMoviesSum,
+  getMovieDetails,
+  getMovieRatings,
+  getMovieTags,
+  getMovieCollaborators,
+};
