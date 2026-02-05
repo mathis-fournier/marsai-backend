@@ -118,6 +118,9 @@ const getMovieTags = (req: any, res: Response) => {
       return res.status(500).json({ error: "Database error: " + err.message });
     }
     res.status(200).json(results);
+  })
+}
+
 const getDirectorsSum = (req: Request, res: Response) => {
   movieModel.getDirectorsSum((err: any, total: any) => {
     if (err) {
