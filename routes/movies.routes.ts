@@ -7,6 +7,10 @@ router.get("/", movieController.getAllMovies);
 router.get("/count", movieController.getMoviesSum);
 router.get("/directors/count", movieController.getDirectorsSum);
 router.get("/best", movieController.getBestMovies);
+router.get("/:id", movieController.getMovieDetails);
+router.get("/:id/ratings", movieController.getMovieRatings);
+router.get("/:id/tags", movieController.getMovieTags);
+router.get("/:id/collaborators", movieController.getMovieCollaborators);
 
 router.post("/", upload.single("file"), movieController.addMovie);
 

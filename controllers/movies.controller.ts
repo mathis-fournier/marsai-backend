@@ -65,6 +65,59 @@ const getMoviesSum = (req: Request, res: Response) => {
   });
 };
 
+const getMovieDetails = (req: any, res: Response) => {
+  const movieId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+  if (movieId === undefined || isNaN(movieId)) {
+    return res.status(400).json({ error: "Invalid movie ID" });
+  }
+  movieModel.getMovieDetails(movieId, (err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
+  });
+};
+
+const getMovieCollaborators = (req: any, res: Response) => {
+  const movieId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+  if (movieId === undefined || isNaN(movieId)) {
+    return res.status(400).json({ error: "Invalid movie ID" });
+  }
+  movieModel.getMovieCollaborators(movieId, (err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DETAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
+  });
+};
+
+const getMovieRatings = (req: any, res: Response) => {
+  const movieId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+  if (movieId === undefined || isNaN(movieId)) {
+    return res.status(400).json({ error: "Invalid movie ID" });
+  }
+  movieModel.getMovieRatings(movieId, (err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
+  });
+};
+
+const getMovieTags = (req: any, res: Response) => {
+  const movieId = req.params.id ? parseInt(req.params.id, 10) : undefined;
+  if (movieId === undefined || isNaN(movieId)) {
+    return res.status(400).json({ error: "Invalid movie ID" });
+  }
+  movieModel.getMovieTags(movieId, (err: any, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(200).json(results);
 const getDirectorsSum = (req: Request, res: Response) => {
   movieModel.getDirectorsSum((err: any, total: any) => {
     if (err) {
@@ -81,5 +134,9 @@ export default {
   getAllMovies,
   getBestMovies,
   getMoviesSum,
+  getMovieDetails,
+  getMovieRatings,
+  getMovieTags,
+  getMovieCollaborators,
   getDirectorsSum,
 };

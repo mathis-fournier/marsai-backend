@@ -44,6 +44,48 @@ const getMoviesSum = (callback: (err: any, results: any) => void) => {
   });
 };
 
+const getMovieDetails = (
+  movieId: number | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM movie m WHERE m.id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieCollaborators = (
+  movieId: number | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM collaborator WHERE movie_id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieRatings = (
+  movieId: number,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "SELECT * FROM rating WHERE movie_id = ?";
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
+  });
+};
+
+const getMovieTags = (
+  movieId: number,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = `
+    SELECT t.name
+    FROM movie_tag mt
+    JOIN tag t ON mt.tag_id = t.id
+    WHERE mt.movie_id = ?
+  `;
+  db.query(query, [movieId], (err: any, results: any) => {
+    callback(err, results);
 const getDirectorsSum = (callback: (err: any, results: any) => void) => {
   const query = "SELECT COUNT(*) as total FROM collaborator";
   db.query(query, (err: any, results: any) => {
@@ -60,5 +102,9 @@ export default {
   getAllMovies,
   getBestMovies,
   getMoviesSum,
+  getMovieDetails,
+  getMovieRatings,
+  getMovieTags,
+  getMovieCollaborators,
   getDirectorsSum,
 };
