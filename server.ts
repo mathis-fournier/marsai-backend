@@ -46,7 +46,6 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use("/test", testRoutes);
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
@@ -54,6 +53,7 @@ app.use("/admin", adminRoutes);
 app.use("/newsletter", subscribersRoutes);
 app.use("/jury", juryRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/subscribers", subscribersRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;

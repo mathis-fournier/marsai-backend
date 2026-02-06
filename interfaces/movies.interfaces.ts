@@ -14,3 +14,10 @@ export interface Movie {
   srt?: string | null;
   status?: "Pending" | "Cancelled" | "Accepted";
 }
+
+export interface RatingData {
+  note: number;
+  comment?: string;
+  user_id: number;
+  movie_id: number;
+}

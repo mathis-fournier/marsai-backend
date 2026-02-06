@@ -72,4 +72,17 @@ function unsubscribeNewsletter(req: any, res: any): void {
   });
 }
 
-export default { subscribeNewsletter, unsubscribeNewsletter };
+function getAllSubscribers(req: any, res: any) {
+  subscribersModel.getAllSubscribers((err: any, results: any) => {
+    if (err) {
+      console.error(`Failed to get all subscribers: ${err}`);
+    }
+    res.status(200).send(results);
+  });
+}
+
+export default {
+  subscribeNewsletter,
+  unsubscribeNewsletter,
+  getAllSubscribers,
+};

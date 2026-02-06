@@ -1,6 +1,6 @@
 const db = require("../config/database");
 import { Request, Response } from "express";
-import { Movie } from "../interfaces/movies.interfaces";
+import { Movie, RatingData } from "../interfaces/movies.interfaces";
 import movieModel from "../models/movies.model";
 
 const addMovie = (req: Request, res: Response) => {
@@ -118,8 +118,8 @@ const getMovieTags = (req: any, res: Response) => {
       return res.status(500).json({ error: "Database error: " + err.message });
     }
     res.status(200).json(results);
-  })
-}
+  });
+};
 
 const getDirectorsSum = (req: Request, res: Response) => {
   movieModel.getDirectorsSum((err: any, total: any) => {
@@ -129,6 +129,20 @@ const getDirectorsSum = (req: Request, res: Response) => {
       });
     }
     res.json({ total });
+  });
+};
+
+const postMovieRating = (req: Request, res: Response) => {
+  const { ratingData } = req.body;
+
+  movieModel.postMovieRating(ratingData, (err: Error, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res
+      .status(201)
+      .json({ message: "Note ajoutée avec succès", id: results.insertId });
   });
 };
 
@@ -142,4 +156,5 @@ export default {
   getMovieTags,
   getMovieCollaborators,
   getDirectorsSum,
+  postMovieRating,
 };
