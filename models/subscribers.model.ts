@@ -12,7 +12,15 @@ function getSubscribersByEmail(
     callback(null, results);
   });
 }
-
+function getAllSubscribers(callback: (err: any, results?: any) => void): void {
+  const query = "SELECT * FROM subscriber";
+  db.query(query, (err: any, results: any) => {
+    if (err) {
+      return callback(err);
+    }
+    callback(null, results);
+  });
+}
 function addSubscriber(
   email: string,
   callback: (err: any, results?: any) => void,
@@ -39,4 +47,9 @@ function removeSubscriber(
   });
 }
 
-export default { addSubscriber, removeSubscriber, getSubscribersByEmail };
+export default {
+  addSubscriber,
+  removeSubscriber,
+  getSubscribersByEmail,
+  getAllSubscribers,
+};

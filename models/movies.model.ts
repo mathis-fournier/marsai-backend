@@ -1,5 +1,5 @@
 const db = require("../config/database");
-import { Movie } from "../interfaces/movies.interfaces";
+import { Movie, RatingData } from "../interfaces/movies.interfaces";
 
 const postMovie = (data: Movie, callback: (err: any, results: any) => void) => {
   const query = "INSERT INTO movie SET ?";
@@ -74,6 +74,14 @@ const getMovieRatings = (
   });
 };
 
+const postMovieRating = (
+  ratingData: RatingData,
+  callback: (err: any, results: any) => void,
+) => {
+  const sql = "INSERT INTO rating SET ?";
+  db.query(sql, [ratingData]);
+};
+
 const getMovieTags = (
   movieId: number,
   callback: (err: any, results: any) => void,
@@ -110,4 +118,5 @@ export default {
   getMovieTags,
   getMovieCollaborators,
   getDirectorsSum,
+  postMovieRating,
 };
