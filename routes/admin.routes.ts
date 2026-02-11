@@ -37,7 +37,7 @@ router.delete(
   adminController.deleteUser,
 );
 router.put(
-  "/:id",
+  "/movie-status/:id",
   authenticateToken,
   authorizedRoles(["ADMIN", "JURY"]),
   moviesController.changeMovieStatus,
