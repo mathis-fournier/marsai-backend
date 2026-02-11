@@ -12,7 +12,6 @@ router.get("/:id/ratings", movieController.getMovieRatings);
 router.get("/:id/tags", movieController.getMovieTags);
 router.get("/:id/collaborators", movieController.getMovieCollaborators);
 router.post("/:id/rating", movieController.postMovieRating);
-router.put("/:id", movieController.changeMovieStatus);
 
 router.post("/", upload.single("file"), movieController.addMovie);
 
