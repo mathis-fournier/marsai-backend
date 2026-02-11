@@ -108,6 +108,19 @@ const getDirectorsSum = (callback: (err: any, results: any) => void) => {
   });
 };
 
+const changeMovieStatus = (
+  [status, id]: any,
+  callback: (err: any, results: any) => void,
+) => {
+  const query = "UPDATE movie SET status = ? WHERE id = ?";
+  db.query(query, [status, id], (err: any, results: any) => {
+    if (err) {
+      return callback(err, null);
+    }
+    callback(err, results);
+  });
+};
+
 export default {
   postMovie,
   getAllMovies,
@@ -119,4 +132,5 @@ export default {
   getMovieCollaborators,
   getDirectorsSum,
   postMovieRating,
+  changeMovieStatus,
 };

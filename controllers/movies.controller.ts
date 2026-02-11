@@ -148,6 +148,19 @@ const postMovieRating = (req: Request, res: Response) => {
   });
 };
 
+const changeMovieStatus = (req: Request, res: Response) => {
+  const { status } = req.body;
+  const { id } = req.params;
+
+  movieModel.changeMovieStatus([status, id], (err: Error, results: any) => {
+    if (err) {
+      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
+      return res.status(500).json({ error: "Database error: " + err.message });
+    }
+    res.status(201).json({ message: "Status changé avec succes" });
+  });
+};
+
 export default {
   addMovie,
   getAllMovies,
@@ -159,4 +172,5 @@ export default {
   getMovieCollaborators,
   getDirectorsSum,
   postMovieRating,
+  changeMovieStatus,
 };
