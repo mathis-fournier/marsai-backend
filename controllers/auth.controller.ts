@@ -24,6 +24,7 @@ if (!JWT_SECRET) {
 const addUser = (req: any, res: any) => {
   const validation = UserRegister.safeParse(req.body);
   if (!validation.success) {
+    console.error(validation.error.issues);
     return res.status(400).json({ errors: validation.error.issues });
   }
 
@@ -54,6 +55,7 @@ const addUser = (req: any, res: any) => {
 const loginUser = (req: any, res: any) => {
   const validation = UserLogin.safeParse(req.body);
   if (!validation.success) {
+    console.error(validation.error.issues);
     return res.status(400).json({ errors: validation.error.issues });
   }
   const { email, password } = validation.data;
