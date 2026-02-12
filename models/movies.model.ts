@@ -26,7 +26,7 @@ const getBestMovies = (callback: (err: any, results: any) => void) => {
     JOIN rating AS r ON m.id = r.movie_id
     GROUP BY m.id
     ORDER BY average_rating DESC
-    LIMIT 4
+    LIMIT 3
   `;
   db.query(query, (err: any, results: any) => {
     callback(err, results);

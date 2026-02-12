@@ -7,28 +7,42 @@ const deleteEvent = (data: any, callback: (err: any, results: any) => void) => {
   });
 };
 
-const deleteUser = (userId: string | string[] | undefined, callback: (err: any, results: any) => void) => {
+const deleteUser = (
+  userId: string | string[] | undefined,
+  callback: (err: any, results: any) => void,
+) => {
   const query = "DELETE FROM user WHERE id = ?";
   db.query(query, userId, (err: any, results: any) => {
     callback(err, results);
   });
 };
 
-const promoteToAdmin = (userId: string | string[]| undefined, callback: (err: any, results: any) => void) => {
-  const query = "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'ADMIN'))";
+const promoteToAdmin = (
+  userId: string | string[] | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query =
+    "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'ADMIN'))";
   db.query(query, userId, (err: any, results: any) => {
     callback(err, results);
   });
 };
 
-const promoteToJury = (userId: string | string[] | undefined, callback: (err: any, results: any) => void) => {
-  const query = "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'JURY'))";
+const promoteToJury = (
+  userId: string | string[] | undefined,
+  callback: (err: any, results: any) => void,
+) => {
+  const query =
+    "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'JURY'))";
   db.query(query, userId, (err: any, results: any) => {
     callback(err, results);
   });
 };
 
-const updateToAdmin = (userId: string | string[] | undefined, callback: (err: any, results: any) => void) => {
+const updateToAdmin = (
+  userId: string | string[] | undefined,
+  callback: (err: any, results: any) => void,
+) => {
   const query = `
     UPDATE role_user
     SET role_id = (SELECT id FROM role WHERE name = 'ADMIN')
@@ -39,7 +53,10 @@ const updateToAdmin = (userId: string | string[] | undefined, callback: (err: an
   });
 };
 
- const updateToJury = (userId: string | string[] | undefined, callback: (err: any, results: any) => void) => {
+const updateToJury = (
+  userId: string | string[] | undefined,
+  callback: (err: any, results: any) => void,
+) => {
   const query = `
     UPDATE role_user
     SET role_id = (SELECT id FROM role WHERE name = 'JURY')
@@ -47,10 +64,10 @@ const updateToAdmin = (userId: string | string[] | undefined, callback: (err: an
   `;
   db.query(query, userId, (err: any, results: any) => {
     callback(err, results);
-  }); 
-}
+  });
+};
 
- const getAllUsers = (callback: (err: any, results: any) => void) => {
+const getAllUsers = (callback: (err: any, results: any) => void) => {
   const query = `
     SELECT u.id, u.firstname, u.lastname, u.email, GROUP_CONCAT(r.name) AS role
     FROM user u
@@ -63,4 +80,12 @@ const updateToAdmin = (userId: string | string[] | undefined, callback: (err: an
   });
 };
 
-export default { deleteEvent, promoteToAdmin, promoteToJury, getAllUsers, deleteUser, updateToAdmin, updateToJury };
+export default {
+  deleteEvent,
+  promoteToAdmin,
+  promoteToJury,
+  getAllUsers,
+  deleteUser,
+  updateToAdmin,
+  updateToJury,
+};
