@@ -1,6 +1,19 @@
 import Users from "../models/auth.model";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "jsonwebtoken";
+import * as z from "zod";
+
+const UserRegister = z.object({
+  email: z.string().email("Email invalide"),
+  password: z.string().min(8, "8 caracteres minimum"),
+  firstname: z.string().min(1, "Firstname obligatoire"),
+  lastname: z.string().min(1, "Lastname obligatoire"),
+});
+
+const UserLogin = z.object({
+  email: z.string().email(),
+  password: z.string(),
+});
 
 const { JWT_SECRET } = process.env;
 if (!JWT_SECRET) {
@@ -9,7 +22,12 @@ if (!JWT_SECRET) {
 }
 
 const addUser = (req: any, res: any) => {
-  const { email, password, firstname, lastname } = req.body;
+  const validation = UserRegister.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ errors: validation.error.issues });
+  }
+
+  const { email, password, firstname, lastname } = validation.data;
 
   // HASH PASSWORD
   const hashedPassword: string = bcrypt.hashSync(password, 10);
@@ -34,7 +52,11 @@ const addUser = (req: any, res: any) => {
 };
 
 const loginUser = (req: any, res: any) => {
-  const { email, password } = req.body;
+  const validation = UserLogin.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ errors: validation.error.issues });
+  }
+  const { email, password } = validation.data;
 
   Users.getUserByEmail(email, (error: Error, user: any) => {
     // CHECK IF USER EXISTS
