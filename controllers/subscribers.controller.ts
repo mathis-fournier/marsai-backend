@@ -1,15 +1,31 @@
+import path from "path";
+import Attachment from "../interfaces/services.interfaces";
 import subscribersModel from "../models/subscribers.model";
+import sendEmail from "../services/mailjet";
 
 // subscribing to a newsletter
-function subscribeNewsletter(req: any, res: any): void {
+async function subscribeNewsletter(req: any, res: any): Promise<void> {
   const email = req.body.email;
-  console.log(`Subscribing ${email} to the newsletter...`);
+  const subject = "Welcome to our Newsletter! Free gift included!";
+  const textBody = `Thank you for subscribing to our newsletter!\n\n
+  Please enjoy your unsubscribing link packed with a beautifull cat picture.\n\n
+  https://soundcloud.com/salepropre/sets/sale-propre`;
+  const htmlBody = `<h1>Thank you for subscribing to our newsletter!</h1>
+  <p>Please enjoy your unsubscribing link packed with a beautifull cat picture.</p>
+  <p><a href="https://soundcloud.com/salepropre/sets/sale-propre" alt="Free sound">CLIQUE ICI</a></p>`;
+  const attach: Attachment[] = [
+    {
+      filename: "Cat.jpg",
+      path: path.resolve(__dirname, "../services", "welcome.jpg"),
+    },
+  ];
 
   if (!email || typeof email !== "string") {
     console.error("Invalid email address provided for subscription.");
     return res.status(400).send("Invalid email address.");
   }
 
+  // Check if the email is already subscribed to the newsletter
   subscribersModel.getSubscribersByEmail(email, (err: any, results: any) => {
     if (err) {
       console.error(
@@ -21,17 +37,37 @@ function subscribeNewsletter(req: any, res: any): void {
       console.log(`Email ${email} is already subscribed to the newsletter.`);
       return res.status(409).send("Email is already subscribed.");
     }
+
+    // Add subscriber to the database
     console.log(
       `Email ${email} is not subscribed. Proceeding with subscription...`,
     );
-    subscribersModel.addSubscriber(email, (err: any, results: any) => {
+
+    subscribersModel.addSubscriber(email, async (err: any, results: any) => {
       if (err) {
         console.error(`Failed to subscribe ${email}: ${err.message}`);
-        return res.status(500).send("Server error.");
+        return res.status(500).send("Server error during subscription.");
       }
-      console.log(`Subscription result: ${results}`);
       console.log(`Successfully subscribed ${email} to the newsletter!`);
-      res.status(201).send("Successfully subscribed to the newsletter.");
+
+      try {
+        await sendEmail(email, subject, textBody, htmlBody, attach);
+        console.log(`Successfully sent Welcome email to ${email}`);
+        // Send success response only after email is sent
+        res
+          .status(201)
+          .send(
+            "Successfully subscribed to the newsletter and welcome email sent.",
+          );
+      } catch (error) {
+        console.error(`Failed to send Welcome email : ${error}`);
+        // Inform the user they are subscribed but the email failed
+        res
+          .status(207)
+          .send(
+            "Successfully subscribed, but the welcome email could not be sent.",
+          );
+      }
     });
   });
 }
