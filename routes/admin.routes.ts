@@ -3,6 +3,7 @@ import adminController from "../controllers/admin.controller";
 import authorizedRoles from "../middlewares/authorizedRoles";
 import authenticateToken from "../middlewares/authenticateToken";
 import moviesController from "../controllers/movies.controller";
+import eventsController from "../controllers/events.controller";
 
 const router = Router();
 
@@ -41,6 +42,20 @@ router.put(
   authenticateToken,
   authorizedRoles(["ADMIN", "JURY"]),
   moviesController.changeMovieStatus,
+);
+
+router.post(
+  "/event",
+  authenticateToken,
+  authorizedRoles(["ADMIN", "JURY"]),
+  eventsController.addEvent,
+);
+
+router.delete(
+  "/event/:id",
+  authenticateToken,
+  authorizedRoles(["ADMIN"]),
+  eventsController.deleteOne,
 );
 
 export default router;
