@@ -11,7 +11,9 @@ const addMovie = (req: Request, res: Response) => {
     original_title: req.body.original_title,
     english_title: req.body.english_title,
     youtube_url: req.body.youtube_url,
-    cover_image: file ?? "/assets/batman.png",
+    cover_image: file
+      ? "http://localhost:3000/uploads/" + file.filename
+      : "/assets/batman.png",
     duration: parseInt(req.body.duration),
     is_hybrid: isHybrid,
     original_language: req.body.original_language,
