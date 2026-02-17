@@ -6,12 +6,11 @@ import cors, { CorsOptions } from "cors";
 
 // Import Routes
 import movieRoutes from "./routes/movies.routes";
-import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
-import subscribersRoutes from "./routes/subscribers.routes";
 import juryRoutes from "./routes/jury.routes";
+import subscribersRoutes from "./routes/subscribers.routes";
 import newsletterRoutes from "./routes/newsletters.routes";
 
 const app = express();
