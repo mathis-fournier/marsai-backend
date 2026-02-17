@@ -21,4 +21,15 @@ function getAllNewsletters(callback: (err: Error, results: any) => void) {
   });
 }
 
-export default { addNewsletter, getAllNewsletters };
+function getNewsletterById(
+  newsletterId: string,
+  callback: (error: Error, results: any) => void,
+) {
+  const query = "SELECT * FROM newsletter WHERE id = ?";
+  db.query(query, [newsletterId], (error: Error, results: any) => {
+    if (error) return callback(error, null);
+    callback(error, results);
+  });
+}
+
+export default { addNewsletter, getAllNewsletters, getNewsletterById };

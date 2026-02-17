@@ -19,8 +19,8 @@ router.get(
 router.post("/", authenticateToken, authorizedRoles(["ADMIN"]), addNewsletter);
 router.post(
   "/send",
-  //   authenticateToken,
-  //   authorizedRoles(["ADMIN"]),
+  authenticateToken,
+  authorizedRoles(["ADMIN"]),
   sendNewsletterByIdToAllSubscribers,
 );
 export default router;

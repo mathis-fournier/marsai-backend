@@ -19,16 +19,23 @@ const mailjet = new Mailjet.Client({
  * @param fromEmail - The sender's email address.
  * @param fromName - The sender's name.
  */
-
-async function sendEmail(
-  to: string,
-  subject: string,
-  textBody: string,
-  htmlBody: string,
-  attachments: Attachment[] = [],
-  fromEmail: string = "gabriel.viallard-fortier@laplateforme.io",
-  fromName: string = "MarsAI - LYON | GEM",
-) {
+async function sendEmail({
+  to,
+  subject,
+  textBody,
+  htmlBody,
+  attachments,
+  fromEmail = "gabriel.viallard-fortier@laplateforme.io",
+  fromName = "MarsAI - LYON | GEM",
+}: {
+  to: string;
+  subject: string;
+  textBody: string;
+  htmlBody: string;
+  attachments: Attachment[];
+  fromEmail?: string;
+  fromName?: string;
+}): Promise<any> {
   try {
     const attachmentData = await Promise.all(
       attachments.map(async (attachment) => {
@@ -42,17 +49,12 @@ async function sendEmail(
         };
       }),
     );
-
     const requestData: Mailjet.SendEmailV3_1.Message = {
       From: {
         Email: fromEmail,
         Name: fromName,
       },
-      To: [
-        {
-          Email: to,
-        },
-      ],
+      To: [{ Email: to }],
       Subject: subject,
       TextPart: textBody,
       HTMLPart: htmlBody,
@@ -62,10 +64,9 @@ async function sendEmail(
       requestData.Attachments = attachmentData;
     }
 
-    const request = mailjet.post("send", { version: "v3.1" }).request({
-      Messages: [requestData],
-    });
-
+    const request = mailjet
+      .post("send", { version: "v3.1" })
+      .request({ Messages: [requestData] });
     const result = await request;
     console.log("Email sent successfully:", result.body);
     return result.body;

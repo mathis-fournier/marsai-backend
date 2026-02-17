@@ -1,3 +1,5 @@
+import * as Mailjet from "node-mailjet";
+import { promises as fs } from "fs";
 import path from "path";
 import Attachment from "../interfaces/services.interfaces";
 import subscribersModel from "../models/subscribers.model";
@@ -19,7 +21,6 @@ async function subscribeNewsletter(req: any, res: any): Promise<void> {
   <h2>Please enjoy your unsubscribing link.</h2>
   <p><a href="https://soundcloud.com/salepropre/sets/sale-propre" alt="Free sound">CLIQUE ICI</a></p>`;
 
-  
   if (!email || typeof email !== "string") {
     console.error("Invalid email address provided for subscription.");
     return res.status(400).send("Invalid email address.");
@@ -52,7 +53,13 @@ async function subscribeNewsletter(req: any, res: any): Promise<void> {
 
       // Sending confirmation mail
       try {
-        await sendEmail(email, subject, textBody, htmlBody, attach);
+        await sendEmail({
+          to: email,
+          subject: subject,
+          textBody: textBody,
+          htmlBody: htmlBody,
+          attachments: attach,
+        });
         console.log(`Successfully sent Welcome email to ${email}`);
         res
           .status(201)
