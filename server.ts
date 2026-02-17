@@ -12,6 +12,7 @@ import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
 import subscribersRoutes from "./routes/subscribers.routes";
 import juryRoutes from "./routes/jury.routes";
+import newsletterRoutes from "./routes/newsletters.routes";
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/newsletter", subscribersRoutes);
 app.use("/jury", juryRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/subscribers", subscribersRoutes);
+app.use("/newsletters", newsletterRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;
