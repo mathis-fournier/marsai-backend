@@ -4,6 +4,12 @@ import sendEmail from "../services/mailjet";
 import subscribersModel from "../models/subscribers.model";
 import newsletterModel from "../models/newsletter.model";
 
+/**
+ * Ajoute une nouvelle newsletter à la base de données.
+ * @param req - L'objet de requête Express contenant les données de la newsletter.
+ * @param res - L'objet de réponse Express pour renvoyer la réponse au client.
+ * @returns Une réponse JSON avec un message de succès et les données de la newsletter créée.
+ */
 // ADD A NEWSLETTER TO THE DATABASE
 export const addNewsletter = async (req: Request, res: Response) => {
   try {
@@ -27,6 +33,12 @@ export const addNewsletter = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Récupère toutes les newsletters depuis la base de données.
+ * @param req - L'objet de requête Express.
+ * @param res - L'objet de réponse Express pour renvoyer la réponse au client.
+ * @returns Une réponse JSON avec un message de succès et la liste des newsletters.
+ */
 // GET ALL NEWSLETTERS
 export const getAllNewsletters = async (req: Request, res: Response) => {
   try {
@@ -42,8 +54,17 @@ export const getAllNewsletters = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Envoie une newsletter spécifique (identifiée par son ID) à tous les abonnés.
+ * Le processus suit ces étapes :
+ * 1. Récupère la newsletter depuis la base de données.
+ * 2. Récupère la liste de tous les abonnés.
+ * 3. Pour chaque abonné, appelle le service d'envoi d'email avec les détails de la newsletter.
+ * @param req - L'objet de requête Express contenant l'ID de la newsletter à envoyer.
+ * @param res - L'objet de réponse Express pour renvoyer la réponse au client.
+ * @returns Une réponse de succès ou d'erreur suite au processus d'envoi.
+ */
 // Send newsletter to all subscribers
-
 export const sendNewsletterByIdToAllSubscribers = async (
   req: Request,
   res: Response,
@@ -51,9 +72,9 @@ export const sendNewsletterByIdToAllSubscribers = async (
   const newsletterId: string = req.body.newsletterId;
   let nl: any;
 
-  // Call the function to get The selected newsletter
   try {
-    await newsletterModel.getNewsletterById(
+    // Récupère la newsletter avec l'ID spécifié depuis la base de données.
+    newsletterModel.getNewsletterById(
       newsletterId,
       (err: Error, result: any) => {
         if (err) {
@@ -72,10 +93,8 @@ export const sendNewsletterByIdToAllSubscribers = async (
       },
     );
 
-    // If there is no subscriber, then `emails` will be an empty array.
-
-    // Call the function to get all subscribers and retrieve an array of emails.
-    await subscribersModel.getAllSubscribers((err: Error, results: any) => {
+    // Récupère tous les abonnés et obtient un tableau de leurs emails.
+    subscribersModel.getAllSubscribers((err: Error, results: any) => {
       if (err) {
         console.error(`Failed to get all subscribers: ${err}`);
         return res
@@ -86,11 +105,12 @@ export const sendNewsletterByIdToAllSubscribers = async (
               newsletterId,
           );
       }
+
       console.log("subscribers successfully loaded:");
-      console.log(nl);
       const subscribers = results;
-      // For each email call SendEmail service.
-      console.log(subscribers);
+      console.table(subscribers);
+
+      // Pour chaque email, appelle le service d'envoi d'email.
       for (let i = 0; i < subscribers.length; i++) {
         sendEmail({
           to: subscribers[i].email,
