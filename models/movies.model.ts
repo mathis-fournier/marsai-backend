@@ -1,4 +1,5 @@
 const db = require("../config/database");
+
 import { Movie, RatingData } from "../interfaces/movies.interfaces";
 
 const postMovie = (data: Movie, callback: (err: any, results: any) => void) => {
@@ -93,7 +94,8 @@ const getMovieTags = (
     WHERE mt.movie_id = ?
   `;
   db.query(query, [movieId], (err: any, results: any) => {
-    callback(err, results);
+    if (err) callback(err, null);
+    else callback(err, results);
   });
 };
 

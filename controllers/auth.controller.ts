@@ -5,7 +5,7 @@ import * as z from "zod";
 
 const UserRegister = z.object({
   email: z.string().email("Email invalide"),
-  password: z.string().min(8, "8 caracteres minimum"),
+  password: z.string().min(8, "8 caractères minimum"),
   firstname: z.string().min(1, "Firstname obligatoire"),
   lastname: z.string().min(1, "Lastname obligatoire"),
 });
@@ -30,10 +30,10 @@ const addUser = (req: any, res: any) => {
 
   const { email, password, firstname, lastname } = validation.data;
 
-  // HASH PASSWORD
+  // Hasher le mot de passe
   const hashedPassword: string = bcrypt.hashSync(password, 10);
 
-  // SAVE USER TO DB
+  // Enregistrer l'utilisateur dans la base de données
   Users.addUser(
     email,
     hashedPassword,
@@ -61,29 +61,29 @@ const loginUser = (req: any, res: any) => {
   const { email, password } = validation.data;
 
   Users.getUserByEmail(email, (error: Error, user: any) => {
-    // CHECK IF USER EXISTS
+    // Vérifier si l'utilisateur existe
     if (!user) {
       return res.status(404).send("Email ou mot de passe incorrect");
     }
-    // HANDLE SQL ERROR
+    // Gérer les erreurs SQL
     if (error) {
       console.error("Erreur SQL:", error.message);
       return res.status(500).send("Erreur serveur");
     }
-    // COMPARE PASSWORDS
+    // Comparer les mots de passe
     const passwordMatch = bcrypt.compareSync(password, user.password);
     if (!passwordMatch) {
       return res.status(401).send("Email ou mot de passe incorrect");
     }
 
-    // JWT TOKEN GENERATION
+    // Token JWT génération
     const token = jsonwebtoken.sign(
       { userId: user.id, role: user.role },
       (process.env.JWT_SECRET as string).trim(),
       { expiresIn: "1h" },
     );
 
-    // SUCCESSFUL LOGIN
+    // Login réussi
     res.status(200).json({ token, user });
   });
 };

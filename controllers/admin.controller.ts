@@ -3,6 +3,10 @@ import { Request, Response } from "express";
 import adminModel from "../models/admin.model";
 import authModel from "../models/auth.model";
 
+/**
+ * Contrôleur pour supprimer un événement spécifique.
+ * Utilise le modèle 'adminModel' pour exécuter la requête SQL de suppression.
+ */
 const deleteEvent = (req: Request, res: Response) => {
   const { id } = req.params;
   adminModel.deleteEvent(id, (err: any, results: any) => {
@@ -13,6 +17,10 @@ const deleteEvent = (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Contrôleur pour récupérer la liste de tous les utilisateurs.
+ * Utilise le modèle 'adminModel' pour récupérer les données depuis la base de données.
+ */
 const getAllUsers = (req: Request, res: Response) => {
   adminModel.getAllUsers((error: Error, results: any) => {
     if (error) {
@@ -22,6 +30,11 @@ const getAllUsers = (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Contrôleur pour promouvoir un utilisateur au rôle d'administrateur.
+ * Le processus vérifie d'abord si l'utilisateur existe, s'il est déjà administrateur,
+ * ou s'il est déjà jury pour choisir la méthode appropriée de mise à jour dans la base de données.
+ */
 const promoteToAdmin = (req: Request, res: Response) => {
   const { userId } = req.params;
   authModel.getUserById(userId, (error: Error, user: any) => {
@@ -51,6 +64,10 @@ const promoteToAdmin = (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Contrôleur pour promouvoir un utilisateur au rôle de jury.
+ * Le processus suit une logique similaire à promoteToAdmin pour gérer les différents rôles existants.
+ */
 const promoteToJury = (req: Request, res: Response) => {
   const { userId } = req.params;
 
@@ -85,6 +102,10 @@ const promoteToJury = (req: Request, res: Response) => {
   });
 };
 
+/**
+ * Contrôleur pour supprimer un utilisateur spécifique.
+ * Utilise le modèle 'adminModel' pour effectuer la suppression en base de données.
+ */
 const deleteUser = (req: Request, res: Response) => {
   const { id } = req.params;
   adminModel.deleteUser(id, (error: Error, results: any) => {
