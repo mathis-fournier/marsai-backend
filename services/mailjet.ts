@@ -5,8 +5,8 @@ import Attachment from "../interfaces/services.interfaces";
 
 // Initialize the Mailjet client
 const mailjet = new Mailjet.Client({
-  apiKey: process.env.MJ_APIKEY_PUBLIC,
-  apiSecret: process.env.MJ_APIKEY_PRIVATE,
+  apiKey: process.env.MJ_APIKEY_PUBLIC!,
+  apiSecret: process.env.MJ_APIKEY_PRIVATE!,
 });
 
 /**

@@ -42,13 +42,13 @@ CREATE TABLE movie (
     youtube_url VARCHAR(255) NOT NULL UNIQUE,
     cover_image VARCHAR(255) NOT NULL,
     duration INT NOT NULL,
-    is_hybrid BOOLEAN NOT NULL,  -- J'ai passé isHybrid en is_hybrid (snake_case)
+    is_hybrid BOOLEAN NOT NULL,
     original_language ENUM ('French', 'English', 'Spanish', 'German', 'Italian', 'Portuguese', 'Russian', 'Chinese', 'Japanese', 'Korean', 'Arabic', 'Hindi', 'Dutch', 'Swedish', 'Norwegian', 'Danish', 'Finnish', 'Polish', 'Turkish', 'Greek', 'Hebrew', 'Thai', 'Vietnamese', 'Indonesian', 'Malay', 'Tagalog', 'Swahili', 'Afrikaans', 'Hungarian', 'Romanian', 'Czech', 'Slovak', 'Bulgarian', 'Ukrainian', 'Catalan', 'Galician', 'Basque', 'Yoruba', 'Igbo', 'Hausa', 'Zulu', 'Amharic', 'Somali', 'Oromo', 'Xhosa', 'Tigrinya', 'Kinyarwanda', 'Lingala', 'Luganda', 'Shona', 'Twi', 'Wolof', 'Bengali', 'Urdu', 'Punjabi', 'Marathi', 'Telugu', 'Tamil', 'Gujarati', 'Kannada', 'Malayalam', 'Burmese', 'Khmer', 'Lao', 'Nepali', 'Sinhala', 'Uzbek', 'Kazakh', 'Azerbaijani', 'Georgian', 'Armenian', 'Other') NOT NULL,
     original_synopsis TEXT NOT NULL,
     english_synopsis TEXT NOT NULL,
     creative_process TEXT NOT NULL,
     ia_tools TEXT NOT NULL,
-    has_subs BOOLEAN NOT NULL DEFAULT 0, -- J'ai passé hasSubs en has_subs
+    has_subs BOOLEAN NOT NULL DEFAULT 0,
     srt VARCHAR(255),
     status ENUM('Pending', 'Cancelled', 'Accepted') DEFAULT 'Pending'
 );
