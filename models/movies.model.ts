@@ -193,7 +193,8 @@ const getMovieTags = (
 };
 
 const getDirectorsSum = (callback: (err: any, results: any) => void) => {
-  const query = "SELECT COUNT(*) as total FROM collaborator";
+  const query =
+    "SELECT COUNT(*) as total FROM collaborator WHERE job = 'Director'";
   db.query(query, (err: any, results: any) => {
     if (err) {
       return callback(err, null);
