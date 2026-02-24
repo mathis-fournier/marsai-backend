@@ -5,9 +5,6 @@ import upload from "../config/multer";
 const router = Router();
 
 // --- Validation des paramètres ---
-// Utilisez router.param() pour valider 'id' comme numérique. C'est une façon propre de gérer
-// les contraintes de paramètre. Si l'ID n'est pas numérique, Express passera à la route suivante,
-// permettant aux chemins comme '/hybrid' d'être gérés par '/:category'.
 router.param(
   "id",
   (req: Request, res: Response, next: NextFunction, id: any) => {
@@ -21,11 +18,8 @@ router.param(
 
 // --- Routes spécifiques et non paramétrées en premier ---
 router.get("/count", movieController.getMoviesSum);
-router.get("/directors/count", movieController.getDirectorsSum);
 
 // --- Routes spécifiques aux films (par ID) ---
-// Avec router.param(), nous utilisons simplement /:id. La validation est gérée ci-dessus.
-// Ces routes sont placées avant /:category pour être matchées en premier pour les IDs numériques.
 router.get("/:id", movieController.getMovieDetails);
 router.get("/:id/ratings", movieController.getMovieRatings);
 router.get("/:id/tags", movieController.getMovieTags);
@@ -33,36 +27,59 @@ router.get("/:id/collaborators", movieController.getMovieCollaborators);
 router.post("/:id/ratings", movieController.postMovieRating);
 
 // --- Routes de liste de films ---
-// Nous définissons un seul gestionnaire pour toutes les requêtes de type liste.
 const listMoviesHandler = (req: Request, res: Response) => {
-  const { category, tag } = req.params;
+  const { category, type, tag: tagQuery } = req.query;
+  const tag = tagQuery ? parseInt(tagQuery as string) : null;
+  const moviesPerPage = parseInt(req.query.limit as string) || 20;
+  const currentPage = parseInt(req.query.page as string) || 1;
 
-  if (category === "pending") {
-    if (tag) {
-      movieController.getSelectedMoviesByTag(req, res);
+  if (type === "hybrid") {
+    movieController.getHybridMovies(req, res, moviesPerPage, currentPage);
+  } else if (type === "fullAI") {
+    movieController.getFullAIMovies(req, res, moviesPerPage, currentPage);
+  } else if (category === "pending") {
+    if (tag !== null) {
+      movieController.getPendingMoviesByTag(
+        req,
+        res,
+        moviesPerPage,
+        currentPage,
+        tag,
+      );
     } else {
-      movieController.getSelectedMovies(req, res);
+      movieController.getPendingMovies(req, res, moviesPerPage, currentPage);
     }
   } else if (category === "selection") {
-    if (tag) {
-      movieController.getSelectedMoviesByTag(req, res);
+    if (tag !== null) {
+      movieController.getSelectedMoviesByTag(
+        req,
+        res,
+        moviesPerPage,
+        currentPage,
+      );
     } else {
-      movieController.getSelectedMovies(req, res);
+      movieController.getSelectedMovies(req, res, moviesPerPage, currentPage);
     }
-  } else if (category === "hybrid") {
-    movieController.getHybridMovies(req, res);
-  } else if (category === "fullAI") {
-    movieController.getFullAIMovies(req, res);
+  } else if (category === "rejected") {
+    movieController.getRejectedMovies(req, res, moviesPerPage, currentPage);
+  } else if (category === "best") {
+    movieController.getBestMovies(req, res, moviesPerPage, currentPage);
   } else {
-    // Gère GET / et GET /:category (pour les catégories non spéciales)
-    movieController.getAllMovies(req, res);
+    // Gère GET /movies
+    if (tag !== null) {
+      movieController.getAllMoviesByTag(
+        req,
+        res,
+        moviesPerPage,
+        currentPage,
+        tag,
+      );
+    } else {
+      movieController.getAllMovies(req, res, moviesPerPage, currentPage);
+    }
   }
 };
-
 // Enregistrez le gestionnaire pour les différentes routes de liste.
-// Ces routes seront essayées si les routes ci-dessus (par exemple, /:id) sont ignorées.
-router.get("/:category/:tag", listMoviesHandler);
-router.get("/:category", listMoviesHandler);
 router.get("/", listMoviesHandler);
 
 // --- Création de film ---
