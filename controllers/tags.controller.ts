@@ -18,4 +18,25 @@ function getAllTags(req: Request, res: Response) {
   }
 }
 
-export default { getAllTags };
+function addTag(req: Request, res: Response) {
+  if (!req.body.data.name || !req.body.data.movie_id) {
+    return res.status(400).send();
+  } else
+    try {
+      tagsModel.insertTag(
+        req.body.data.name,
+        req.body.data.movie_id,
+        (err: Error | null, results: any) => {
+          if (err) {
+            console.error("Error while inserting tag");
+            return res.status(500).send("Erreur SQL : " + err.message);
+          }
+          return res.status(200).json(results);
+        },
+      );
+    } catch (error: any) {
+      console.error("Unexpected error : " + error.message);
+    }
+}
+
+export default { getAllTags, addTag };

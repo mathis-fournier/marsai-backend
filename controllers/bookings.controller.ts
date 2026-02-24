@@ -2,7 +2,6 @@ const db = require("../config/database");
 import { Request, Response } from "express";
 import { Movie, RatingData } from "../interfaces/movies.interfaces";
 import movieModel from "../models/movies.model";
-import tagsModel from "../models/tags.model";
 
 const addMovie = (req: Request, res: Response) => {
   const file = (req as any).file;
@@ -36,8 +35,8 @@ const addMovie = (req: Request, res: Response) => {
 };
 
 const getAllMovies = (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
+  const page = parseInt(req.query.page as string, 10) || 1;
+  const limit = parseInt(req.query.limit as string, 10) || 10;
   const offset = (page - 1) * limit;
 
   movieModel.getAllMovies(limit, offset, (err: any, results: any) => {
@@ -50,12 +49,7 @@ const getAllMovies = (req: Request, res: Response) => {
 };
 
 const getBestMovies = (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const offset = (page - 1) * limit;
-
-  // Appel à la fonction getBestMovies
-  movieModel.getBestMovies(limit, offset, (err: any, results: any) => {
+  movieModel.getBestMovies((err: any, results: any) => {
     if (err) {
       console.error("ERREUR SQL DÉTAILLÉE :", err.message);
       return res.status(500).json({ error: "Database error: " + err.message });
@@ -169,145 +163,10 @@ const changeMovieStatus = (req: Request, res: Response) => {
   });
 };
 
-const getAllMoviesByTag = (req: Request, res: Response) => {
-  const tag = parseInt(req.params.tag as string, 10) || 1;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const offset = (page - 1) * limit;
-
-  movieModel.getAllMoviesByTag(
-    tag,
-    limit,
-    offset,
-    (err: Error | null, results: any) => {
-      try {
-        if (err) return res.status(500).send("Erreur SQL : " + err.message);
-        return res.status(200).json(results);
-      } catch (error: any) {
-        console.error("Unexpected error : " + error.message);
-        return res.status(500).send("Erreur inattendue : " + error.message);
-      }
-    },
-  );
-};
-const getSelectedMovies = async (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const offset = (page - 1) * limit;
-
-  try {
-    const results = await movieModel.getSelectedMovies(limit, offset);
-    res.status(200).json(results);
-  } catch (error: any) {
-    console.error("ERREUR SQL DÉTAILLÉE :", error.message);
-    return res
-      .status(500)
-      .json({ error: "Erreur de base de données : " + error.message });
-  }
-};
-const getSelectedMoviesByTag = async (req: Request, res: Response) => {
-  const tag = parseInt(req.params.tag as string, 10);
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const offset = (page - 1) * limit;
-
-  try {
-    const results = await movieModel.getSelectedMoviesByTag(tag, limit, offset);
-    res.status(200).json(results);
-  } catch (error: any) {
-    console.error("ERREUR SQL DÉTAILLÉE :", error.message);
-    return res
-      .status(500)
-      .json({ error: "Erreur de base de données : " + error.message });
-  }
-};
-const getPendingMovies = async (req: Request, res: Response) => {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const offset = (page - 1) * limit;
-
-  try {
-    const results = await movieModel.getPendingMovies(limit, offset);
-    res.status(200).json(results);
-  } catch (error: any) {
-    return res
-      .status(500)
-      .json({ error: "Erreur de base de données : " + error.message });
-  }
-};
-const getRejectedMovies = async (req: Request, res: Response) => {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const offset = (page - 1) * limit;
-
-  try {
-    const results = await movieModel.getRejectedMovies(limit, offset);
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur Serveur : " + err.message });
-  }
-};
-const getRejectedMoviesCount = async (req: Request, res: Response) => {
-  try {
-    const results = await movieModel.getRejectedMoviesCount();
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur Serveur : " + err.message });
-  }
-};
-const getHybridCount = async (req: Request, res: Response) => {
-  try {
-    const results = await movieModel.getHybridCount();
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur Serveur : " + err.message });
-  }
-};
-const getFullAICount = async (req: Request, res: Response) => {
-  try {
-    const results = await movieModel.getFullAICount();
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur Serveur : " + err.message });
-  }
-};
-
-async function getHybridMovies(req: Request, res: Response) {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const offset = (page - 1) * limit;
-  try {
-    const results = await movieModel.getHybrid(limit, offset);
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur serveur : " + err.message });
-  }
-}
-async function getFullAIMovies(req: Request, res: Response) {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const offset = (page - 1) * limit;
-  try {
-    const results = await movieModel.getFullAI(limit, offset);
-    res.status(200).json(results);
-  } catch (err: any) {
-    return res.status(500).json({ error: "Erreur serveur : " + err.message });
-  }
-}
 export default {
   addMovie,
   getAllMovies,
-  getAllMoviesByTag,
   getBestMovies,
-  getSelectedMovies,
-  getSelectedMoviesByTag,
-  getPendingMovies,
-  getRejectedMovies,
-  getRejectedMoviesCount,
-  getHybridMovies,
-  getHybridCount,
-  getFullAIMovies,
-  getFullAICount,
   getMoviesSum,
   getMovieDetails,
   getMovieRatings,
