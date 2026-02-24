@@ -35,9 +35,12 @@ const addMovie = (req: Request, res: Response) => {
   });
 };
 
-const getAllMovies = (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
+const getAllMovies = (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const offset = (page - 1) * limit;
 
   movieModel.getAllMovies(limit, offset, (err: any, results: any) => {
@@ -49,9 +52,12 @@ const getAllMovies = (req: Request, res: Response) => {
   });
 };
 
-const getBestMovies = (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
+const getBestMovies = (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const offset = (page - 1) * limit;
 
   // Appel à la fonction getBestMovies
@@ -169,10 +175,13 @@ const changeMovieStatus = (req: Request, res: Response) => {
   });
 };
 
-const getAllMoviesByTag = (req: Request, res: Response) => {
-  const tag = parseInt(req.params.tag as string, 10) || 1;
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
+const getAllMoviesByTag = (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
   const offset = (page - 1) * limit;
 
   movieModel.getAllMoviesByTag(
@@ -185,14 +194,17 @@ const getAllMoviesByTag = (req: Request, res: Response) => {
         return res.status(200).json(results);
       } catch (error: any) {
         console.error("Unexpected error : " + error.message);
-        return res.status(500).send("Erreur inattendue : " + error.message);
+        return res.status(500).send(" inattendue : " + error.message);
       }
     },
   );
 };
-const getSelectedMovies = async (req: Request, res: Response) => {
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
+const getSelectedMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const offset = (page - 1) * limit;
 
   try {
@@ -205,10 +217,13 @@ const getSelectedMovies = async (req: Request, res: Response) => {
       .json({ error: "Erreur de base de données : " + error.message });
   }
 };
-const getSelectedMoviesByTag = async (req: Request, res: Response) => {
+const getSelectedMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const tag = parseInt(req.params.tag as string, 10);
-  const page = parseInt(req.params.page as string, 10) || 1;
-  const limit = parseInt(req.params.limit as string, 10) || 20;
   const offset = (page - 1) * limit;
 
   try {
@@ -221,11 +236,13 @@ const getSelectedMoviesByTag = async (req: Request, res: Response) => {
       .json({ error: "Erreur de base de données : " + error.message });
   }
 };
-const getPendingMovies = async (req: Request, res: Response) => {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
+const getPendingMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const offset = (page - 1) * limit;
-
   try {
     const results = await movieModel.getPendingMovies(limit, offset);
     res.status(200).json(results);
@@ -235,9 +252,29 @@ const getPendingMovies = async (req: Request, res: Response) => {
       .json({ error: "Erreur de base de données : " + error.message });
   }
 };
-const getRejectedMovies = async (req: Request, res: Response) => {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
+const getPendingMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getPendingMoviesByTag(tag, limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getRejectedMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
   const offset = (page - 1) * limit;
 
   try {
@@ -271,10 +308,12 @@ const getFullAICount = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "Erreur Serveur : " + err.message });
   }
 };
-
-async function getHybridMovies(req: Request, res: Response) {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
+async function getHybridMovies(
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) {
   const offset = (page - 1) * limit;
   try {
     const results = await movieModel.getHybrid(limit, offset);
@@ -283,9 +322,12 @@ async function getHybridMovies(req: Request, res: Response) {
     return res.status(500).json({ error: "Erreur serveur : " + err.message });
   }
 }
-async function getFullAIMovies(req: Request, res: Response) {
-  const limit = parseInt(req.params.limit as string, 10) || 20;
-  const page = parseInt(req.params.page as string, 10) || 1;
+async function getFullAIMovies(
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) {
   const offset = (page - 1) * limit;
   try {
     const results = await movieModel.getFullAI(limit, offset);
@@ -302,6 +344,7 @@ export default {
   getSelectedMovies,
   getSelectedMoviesByTag,
   getPendingMovies,
+  getPendingMoviesByTag,
   getRejectedMovies,
   getRejectedMoviesCount,
   getHybridMovies,

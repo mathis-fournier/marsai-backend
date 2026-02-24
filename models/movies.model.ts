@@ -102,6 +102,28 @@ const getPendingMovies = async (
     );
   }
 };
+const getPendingMoviesByTag = async (
+  tag: number,
+  limit: number,
+  offset: number,
+): Promise<any> => {
+  const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Pending' LIMIT ? OFFSET ?`;
+  try {
+    return await new Promise((resolve, reject) => {
+      db.query(query, [tag, limit, offset], (err: any, results: any) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(results);
+        }
+      });
+    });
+  } catch (error: any) {
+    throw new Error(
+      "Erreur lors de la récupération des films en attente : " + error.message,
+    );
+  }
+};
 
 const getMoviesSum = (callback: (err: any, results: any) => void) => {
   const query = "SELECT COUNT(*) as total FROM movie";
@@ -315,7 +337,7 @@ const getHybrid = async (limit: number, offset: number) => {
   }
 };
 const getFullAI = async (limit: number, offset: number) => {
-  const query = `SELECT * FROM movie WHERE is_hybrid = false LIMIT ? OFFSET ?`;
+  const query = `SELECT * FROM movie WHERE is_hybrid = 0 LIMIT ? OFFSET ?`;
   try {
     return await new Promise((resolve, reject) => {
       db.query(query, [limit, offset], (err: any, results: any) => {
@@ -342,6 +364,7 @@ export default {
   getSelectedMovies,
   getSelectedMoviesByTag,
   getPendingMovies,
+  getPendingMoviesByTag,
   getRejectedMovies,
   getRejectedMoviesCount,
   getHybrid,

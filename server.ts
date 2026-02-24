@@ -40,6 +40,12 @@ const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
+    // Ajouter une condition pour autoriser l'origine de développement React
+    if (origin === "http://localhost:5173") {
+      // Remplacez 5173 par le port réel de votre application React
+      return callback(null, true);
+    }
+
     callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
