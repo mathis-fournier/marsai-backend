@@ -1,3 +1,5 @@
+import * as Mailjet from "node-mailjet";
+import { promises as fs } from "fs";
 import path from "path";
 import Attachment from "../interfaces/services.interfaces";
 import subscribersModel from "../models/subscribers.model";
@@ -6,19 +8,18 @@ import sendEmail from "../services/mailjet";
 // subscribing to a newsletter
 async function subscribeNewsletter(req: any, res: any): Promise<void> {
   const email = req.body.email;
-  const subject = "Welcome to our Newsletter! Free gift included!";
-  const textBody = `Thank you for subscribing to our newsletter!\n\n
-  Please enjoy your unsubscribing link packed with a beautifull cat picture.\n\n
-  https://soundcloud.com/salepropre/sets/sale-propre`;
-  const htmlBody = `<h1>Thank you for subscribing to our newsletter!</h1>
-  <p>Please enjoy your unsubscribing link packed with a beautifull cat picture.</p>
-  <p><a href="https://soundcloud.com/salepropre/sets/sale-propre" alt="Free sound">CLIQUE ICI</a></p>`;
   const attach: Attachment[] = [
     {
       filename: "Cat.jpg",
       path: path.resolve(__dirname, "../services", "welcome.jpg"),
     },
   ];
+  const subject = "Welcome to our Newsletter!";
+  const textBody = `Thank you for subscribing to our newsletter!\n\n
+  Please enjoy your unsubscribing link.`;
+  const htmlBody = `<h1>Thank you for subscribing to our newsletter!</h1>
+  <h2>Please enjoy your unsubscribing link.</h2>
+  <p><a href="https://soundcloud.com/salepropre/sets/sale-propre" alt="Free sound">CLIQUE ICI</a></p>`;
 
   if (!email || typeof email !== "string") {
     console.error("Invalid email address provided for subscription.");
@@ -50,10 +51,16 @@ async function subscribeNewsletter(req: any, res: any): Promise<void> {
       }
       console.log(`Successfully subscribed ${email} to the newsletter!`);
 
+      // Sending confirmation mail
       try {
-        await sendEmail(email, subject, textBody, htmlBody, attach);
+        await sendEmail({
+          to: email,
+          subject: subject,
+          textBody: textBody,
+          htmlBody: htmlBody,
+          attachments: attach,
+        });
         console.log(`Successfully sent Welcome email to ${email}`);
-        // Send success response only after email is sent
         res
           .status(201)
           .send(

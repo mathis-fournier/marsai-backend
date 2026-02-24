@@ -6,12 +6,13 @@ import cors, { CorsOptions } from "cors";
 
 // Import Routes
 import movieRoutes from "./routes/movies.routes";
-import testRoutes from "./routes/test.routes";
 import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
 import adminRoutes from "./routes/admin.routes";
-import subscribersRoutes from "./routes/subscribers.routes";
 import juryRoutes from "./routes/jury.routes";
+import subscribersRoutes from "./routes/subscribers.routes";
+import newsletterRoutes from "./routes/newsletters.routes";
+import tagsRoutes from "./routes/tags.routes";
 
 const app = express();
 
@@ -39,6 +40,12 @@ const corsOptions: CorsOptions = {
       return callback(null, true);
     }
 
+    // Ajouter une condition pour autoriser l'origine de développement React
+    if (origin === "http://localhost:5173") {
+      // Remplacez 5173 par le port réel de votre application React
+      return callback(null, true);
+    }
+
     callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
@@ -54,6 +61,8 @@ app.use("/newsletter", subscribersRoutes);
 app.use("/jury", juryRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/subscribers", subscribersRoutes);
+app.use("/newsletters", newsletterRoutes);
+app.use("/tags", tagsRoutes);
 
 // Server setup
 const PORT = process.env.PORT || 3000;
