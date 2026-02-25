@@ -33,31 +33,95 @@ const listMoviesHandler = (req: Request, res: Response) => {
   const moviesPerPage = parseInt(req.query.limit as string) || 20;
   const currentPage = parseInt(req.query.page as string) || 1;
 
-  if (type === "hybrid") {
-    movieController.getHybridMovies(req, res, moviesPerPage, currentPage);
-  } else if (type === "fullAI") {
-    movieController.getFullAIMovies(req, res, moviesPerPage, currentPage);
-  } else if (category === "pending") {
+  if (category === "pending") {
     if (tag !== null) {
-      movieController.getPendingMoviesByTag(
-        req,
-        res,
-        moviesPerPage,
-        currentPage,
-        tag,
-      );
+      if (type === "hybrid") {
+        movieController.getPendingHybridMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      } else if (type === "fullAI") {
+        movieController.getPendingFullAIMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      } else {
+        movieController.getPendingMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      }
     } else {
-      movieController.getPendingMovies(req, res, moviesPerPage, currentPage);
+      if (type === "hybrid") {
+        movieController.getPendingHybridMovies(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+        );
+      } else if (type === "fullAI") {
+        movieController.getPendingFullAIMovies(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+        );
+      } else {
+        movieController.getPendingMovies(req, res, moviesPerPage, currentPage);
+      }
     }
   } else if (category === "selection") {
     if (tag !== null) {
-      movieController.getSelectedMoviesByTag(
-        req,
-        res,
-        moviesPerPage,
-        currentPage,
-      );
+      if (type === "hybrid") {
+        movieController.getSelectedHybridMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      } else if (type === "fullAI") {
+        movieController.getSelectedFullAIMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      } else {
+        movieController.getSelectedMoviesByTag(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+          tag,
+        );
+      }
     } else {
+      if (type === "hybrid") {
+        movieController.getSelectedHybridMovies(
+          req,
+          res,
+          moviesPerPage,
+          currentPage,
+        );
+      } else if (type === "fullAI") {
+        movieController.getSelectedFullAIMovies(
+          req,
+          res,
+          moviesPerPage,
+          currentPage
+        );
+      }
       movieController.getSelectedMovies(req, res, moviesPerPage, currentPage);
     }
   } else if (category === "rejected") {
