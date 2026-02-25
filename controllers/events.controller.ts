@@ -15,6 +15,13 @@ const CreateEvent = z.object({
   published_at: z.coerce.date(),
 });
 
+const CreateReservation = z.object({
+  firstname: z.string().min(2, "Prénom trop court"),
+  lastname: z.string().min(2, "Nom trop court"),
+  email: z.string().email("Email invalide"),
+  event_id: z.number().int(),
+});
+
 const addEvent = (req: Request, res: Response) => {
   const validation = CreateEvent.safeParse(req.body);
   if (!validation.success) {
@@ -81,28 +88,48 @@ const getReservations = (req: Request, res: Response) => {
 };
 
 const addReservation = async (req: Request, res: Response) => {
-  const { firstname, lastname, email } = req.body;
-  eventsModel.addParticipant(
-    { firstname, lastname, email },
-    (err: any, results: any) => {
-      if (err) {
-        return res.status(500).json({ error: "Database error" + err });
-      }
-      res.json(results);
-    },
-  );
+  // 1. Validation
+  const validation = CreateReservation.safeParse(req.body);
+  if (!validation.success) {
+    return res.status(400).json({ errors: validation.error.issues });
+  }
 
-  const { participant_id, event_id } = req.body;
-  const booked_at = Date.now();
-  eventsModel.addBooking(
-    { participant_id, event_id, booked_at },
-    (err: any, results: any) => {
-      if (err) {
-        return res.status(500).json({ error: "Database error" + err });
-      }
-      res.json(results);
-    },
-  );
+  const { firstname, lastname, email, event_id } = validation.data;
+
+  try {
+    const participantResult: any = await new Promise((resolve, reject) => {
+      eventsModel.addParticipant(
+        { firstname, lastname, email },
+        (err, results) => {
+          if (err) reject(err);
+          else resolve(results);
+        },
+      );
+    });
+
+    const participant_id = participantResult.insertId;
+
+    const booked_at = new Date();
+    await new Promise((resolve, reject) => {
+      eventsModel.addBooking(
+        { participant_id, event_id, booked_at },
+        (err, results) => {
+          if (err) reject(err);
+          else resolve(results);
+        },
+      );
+    });
+
+    return res.status(201).json({
+      message: "Réservation réussie",
+      participantId: participant_id,
+    });
+  } catch (error: any) {
+    console.error("Reservation Error:", error);
+    return res.status(500).json({
+      error: "Erreur lors de la réservation : " + error.message,
+    });
+  }
 };
 
 export default {
