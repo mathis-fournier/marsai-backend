@@ -148,8 +148,15 @@ const getDirectorsSum = (req: Request, res: Response) => {
   });
 };
 
-const postMovieRating = (req: Request, res: Response) => {
-  const { ratingData } = req.body;
+const postMovieRating = (req: any, res: Response) => {
+  const { note, comment, movie_id, user_id } = req.body;
+
+  const ratingData: RatingData = {
+    note: note,
+    comment: comment,
+    user_id: user_id,
+    movie_id: movie_id,
+  };
 
   movieModel.postMovieRating(ratingData, (err: Error, results: any) => {
     if (err) {
@@ -222,10 +229,9 @@ const getSelectedMoviesByTag = async (
   res: Response,
   limit: number,
   page: number,
+  tag: number,
 ) => {
-  const tag = parseInt(req.params.tag as string, 10);
   const offset = (page - 1) * limit;
-
   try {
     const results = await movieModel.getSelectedMoviesByTag(tag, limit, offset);
     res.status(200).json(results);
@@ -252,6 +258,7 @@ const getPendingMovies = async (
       .json({ error: "Erreur de base de données : " + error.message });
   }
 };
+
 const getPendingMoviesByTag = async (
   req: Request,
   res: Response,
@@ -262,6 +269,228 @@ const getPendingMoviesByTag = async (
   const offset = (page - 1) * limit;
   try {
     const results = await movieModel.getPendingMoviesByTag(tag, limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getPendingHybridMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getPendingHybridMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getPendingFullAIMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getPendingFullAIMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getPendingHybridMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getPendingHybridMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getPendingFullAIMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getPendingFullAIMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getSelectedHybridMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getSelectedHybridMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getSelectedFullAIMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getSelectedFullAIMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getSelectedHybridMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getSelectedHybridMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getSelectedFullAIMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getSelectedFullAIMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getRejectedHybridMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getRejectedHybridMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getRejectedFullAIMovies = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getRejectedFullAIMovies(limit, offset);
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getRejectedHybridMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getRejectedHybridMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
+    res.status(200).json(results);
+  } catch (error: any) {
+    return res
+      .status(500)
+      .json({ error: "Erreur de base de données : " + error.message });
+  }
+};
+const getRejectedFullAIMoviesByTag = async (
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) => {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getRejectedFullAIMoviesByTag(
+      tag,
+      limit,
+      offset,
+    );
     res.status(200).json(results);
   } catch (error: any) {
     return res
@@ -322,6 +551,21 @@ async function getHybridMovies(
     return res.status(500).json({ error: "Erreur serveur : " + err.message });
   }
 }
+async function getHybridMoviesByTag(
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getHybridByTag(limit, offset, tag);
+    res.status(200).json(results);
+  } catch (err: any) {
+    return res.status(500).json({ error: "Erreur serveur : " + err.message });
+  }
+}
 async function getFullAIMovies(
   req: Request,
   res: Response,
@@ -336,6 +580,21 @@ async function getFullAIMovies(
     return res.status(500).json({ error: "Erreur serveur : " + err.message });
   }
 }
+async function getFullAIMoviesByTag(
+  req: Request,
+  res: Response,
+  limit: number,
+  page: number,
+  tag: number,
+) {
+  const offset = (page - 1) * limit;
+  try {
+    const results = await movieModel.getFullAIByTag(limit, offset, tag);
+    res.status(200).json(results);
+  } catch (err: any) {
+    return res.status(500).json({ error: "Erreur serveur : " + err.message });
+  }
+}
 export default {
   addMovie,
   getAllMovies,
@@ -343,13 +602,27 @@ export default {
   getBestMovies,
   getSelectedMovies,
   getSelectedMoviesByTag,
+  getSelectedHybridMovies,
+  getSelectedFullAIMovies,
+  getSelectedHybridMoviesByTag,
+  getSelectedFullAIMoviesByTag,
   getPendingMovies,
+  getPendingHybridMovies,
+  getPendingFullAIMovies,
+  getPendingHybridMoviesByTag,
+  getPendingFullAIMoviesByTag,
   getPendingMoviesByTag,
   getRejectedMovies,
+  getRejectedHybridMovies,
+  getRejectedFullAIMovies,
+  getRejectedHybridMoviesByTag,
+  getRejectedFullAIMoviesByTag,
   getRejectedMoviesCount,
   getHybridMovies,
+  getHybridMoviesByTag,
   getHybridCount,
   getFullAIMovies,
+  getFullAIMoviesByTag,
   getFullAICount,
   getMoviesSum,
   getMovieDetails,
