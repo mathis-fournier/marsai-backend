@@ -1,5 +1,6 @@
-import multer from "multer";
+import multer, { FileFilterCallback } from "multer";
 import path from "path";
+import { Request } from "express";
 
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
@@ -12,12 +13,16 @@ const storage = multer.diskStorage({
   },
 });
 
-const filter = (req: any, file: any, callback: any) => {
-  const allowedTypes = ["image/jpeg", "image/png ", "image/gif"];
+const filter = (
+  req: Request,
+  file: Express.Multer.File,
+  callback: FileFilterCallback,
+) => {
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif"];
   if (allowedTypes.includes(file.mimetype)) {
     callback(null, true);
   } else {
-    callback(new Error("Format invalide "), false);
+    callback(new Error("Format invalide "));
   }
 };
 const upload = multer({
