@@ -1,16 +1,16 @@
-const db = require("../config/database");
 import { Request, Response } from "express";
 import juryModel from "../models/jury.model";
 
-const getRatingCount = (req: Request, res: Response) => {
-  juryModel.getRatingCount((err: any, total: any) => {
-    if (err) {
-      return res.status(500).json({
-        error: "Erreur de base de données lors de la récupération du total.",
-      });
-    }
+const getRatingCount = async (req: Request, res: Response) => {
+  try {
+    const total = await juryModel.getRatingCount();
     res.json({ total });
-  });
+  } catch (err: any) {
+    console.error("Database error:", err.message);
+    return res.status(500).json({
+      error: "Erreur de base de données lors de la récupération du total.",
+    });
+  }
 };
 
 export default {

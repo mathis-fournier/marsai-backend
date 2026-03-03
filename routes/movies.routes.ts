@@ -18,7 +18,7 @@ router.param(
 
 // --- Routes spécifiques et non paramétrées en premier ---
 router.get("/count", movieController.getMoviesSum);
-
+router.get("/accepted/count", movieController.getRejectedMoviesCount);
 // --- Routes spécifiques aux films (par ID) ---
 router.get("/:id", movieController.getMovieDetails);
 router.get("/:id/ratings", movieController.getMovieRatings);
@@ -119,10 +119,11 @@ const listMoviesHandler = (req: Request, res: Response) => {
           req,
           res,
           moviesPerPage,
-          currentPage
+          currentPage,
         );
+      } else {
+        movieController.getSelectedMovies(req, res, moviesPerPage, currentPage);
       }
-      movieController.getSelectedMovies(req, res, moviesPerPage, currentPage);
     }
   } else if (category === "rejected") {
     movieController.getRejectedMovies(req, res, moviesPerPage, currentPage);

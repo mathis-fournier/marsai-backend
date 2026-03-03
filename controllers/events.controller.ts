@@ -1,4 +1,3 @@
-const db = require("../config/database");
 import { Request, Response } from "express";
 import eventsModel from "../models/events.model";
 import * as z from "zod";
@@ -18,114 +17,112 @@ const CreateEvent = z.object({
 const CreateReservation = z.object({
   firstname: z.string().min(2, "Prénom trop court"),
   lastname: z.string().min(2, "Nom trop court"),
-  email: z.string().email("Email invalide"),
+  email: z.email("Email invalide"),
   event_id: z.number().int(),
 });
+const addEvent = async (req: Request, res: Response) => {
+  try {
+    const validation = CreateEvent.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ errors: validation.error.issues });
+    }
 
-const addEvent = (req: Request, res: Response) => {
-  const validation = CreateEvent.safeParse(req.body);
-  if (!validation.success) {
-    console.error(validation.error.issues);
-    return res.status(400).json({ errors: validation.error.issues });
+    const event = validation.data;
+    const result = await eventsModel.addEvent(event);
+
+    return res.status(201).json({ message: "Event ajouté avec succès" });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({ error: "Database error" });
   }
-  const event = validation.data;
-  eventsModel.addEvent(event, (err: any, total: any) => {
-    if (err) {
-      console.error("ERREUR SQL DÉTAILLÉE :", err.message);
-      return res.status(500).json({ error: "Database error: " + err.message });
-    }
-    res.status(201).json({ message: "Event ajouté avec succès" });
-  });
 };
 
-const getAll = (req: Request, res: Response) => {
-  eventsModel.getAll((err: any, results: any) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+const getAll = async (req: Request, res: Response) => {
+  try {
+    const results = await eventsModel.getAll();
     res.json(results);
-  });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({ error: "Database error" });
+  }
 };
 
-const getOne = (req: Request, res: Response) => {
+const getOne = async (req: Request, res: Response) => {
   const id = req.params.id;
-  eventsModel.getOne(id, (err: any, results: any) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const results = await eventsModel.getOne(id);
     res.json(results);
-  });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({ error: "Database error" });
+  }
 };
 
-const getParticipantSum = (req: Request, res: Response) => {
-  eventsModel.getParticipantSum((err: any, total: any) => {
-    if (err) {
-      return res.status(500).json({
-        error: "Erreur de base de données lors de la récupération du total.",
-      });
-    }
+const getParticipantSum = async (req: Request, res: Response) => {
+  try {
+    const total = await eventsModel.getParticipantSum();
     res.json({ total });
-  });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({
+      error: "Erreur de base de données lors de la récupération du total.",
+    });
+  }
 };
 
-const deleteOne = (req: Request, res: Response) => {
+const deleteOne = async (req: Request, res: Response) => {
   const id = req.params.id;
-  eventsModel.deleteOne(id, (err: any, results: any) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+  try {
+    const results = await eventsModel.deleteOne(id);
     res.json(results);
-  });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({ error: "Database error" });
+  }
 };
 
-const getReservations = (req: Request, res: Response) => {
-  eventsModel.getReservations((err: any, results: any) => {
-    if (err) {
-      return res.status(500).json({ error: "Database error" });
-    }
+const getReservations = async (req: Request, res: Response) => {
+  try {
+    const results = await eventsModel.getReservations();
     res.json(results);
-  });
+  } catch (error: any) {
+    console.error("Database error:", error.message);
+    return res.status(500).json({ error: "Database error" });
+  }
 };
 
 const addReservation = async (req: Request, res: Response) => {
-  // 1. Validation
-  const validation = CreateReservation.safeParse(req.body);
-  if (!validation.success) {
-    return res.status(400).json({ errors: validation.error.issues });
-  }
-
-  const { firstname, lastname, email, event_id } = validation.data;
-
   try {
-    const participantResult: any = await new Promise((resolve, reject) => {
-      eventsModel.addParticipant(
-        { firstname, lastname, email },
-        (err, results) => {
-          if (err) reject(err);
-          else resolve(results);
-        },
-      );
+    const validation = CreateReservation.safeParse(req.body);
+    if (!validation.success) {
+      return res.status(400).json({ errors: validation.error.issues });
+    }
+
+    const { firstname, lastname, email, event_id } = validation.data;
+
+    if (!firstname || !lastname || !email) {
+      return res.status(400).json({
+        error: "Les champs firstname, lastname et email sont requis.",
+      });
+    }
+    // Vérification de l'unicité de l'email pour l'événement
+    const existingBooking = await eventsModel.findParticipantByEmail(email);
+    if (existingBooking !== null) {
+      return res.status(400).json({
+        error: "Cet email est déjà inscrit pour cet événement.",
+      });
+    }
+    const result = await eventsModel.addBooking({
+      participant: { firstname, lastname, email },
+      event_id,
     });
-
-    const participant_id = participantResult.insertId;
-
-    const booked_at = new Date();
-    await new Promise((resolve, reject) => {
-      eventsModel.addBooking(
-        { participant_id, event_id, booked_at },
-        (err, results) => {
-          if (err) reject(err);
-          else resolve(results);
-        },
-      );
-    });
-
     return res.status(201).json({
       message: "Réservation réussie",
-      participantId: participant_id,
+      participantId: result.participantId,
+      bookingId: result.bookingId,
     });
   } catch (error: any) {
-    console.error("Reservation Error:", error);
+    console.error("Erreur de réservation :", error.message);
     return res.status(500).json({
       error: "Erreur lors de la réservation : " + error.message,
     });

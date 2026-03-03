@@ -1,73 +1,52 @@
-const db = require("../config/database");
+import { db } from "../config/database";
 
-const deleteEvent = (data: any, callback: (err: any, results: any) => void) => {
+const deleteEvent = async (data: any) => {
   const query = "DELETE FROM event WHERE id = ?";
-  db.query(query, data, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, data);
+  return results;
 };
 
-const deleteUser = (
-  userId: string | string[] | undefined,
-  callback: (err: any, results: any) => void,
-) => {
+const deleteUser = async (userId: string | string[] | undefined) => {
   const query = "DELETE FROM user WHERE id = ?";
-  db.query(query, userId, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, userId);
+  return results;
 };
 
-const promoteToAdmin = (
-  userId: string | string[] | undefined,
-  callback: (err: any, results: any) => void,
-) => {
+const promoteToAdmin = async (userId: string | string[] | undefined) => {
   const query =
     "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'ADMIN'))";
-  db.query(query, userId, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, userId);
+  return results;
 };
 
-const promoteToJury = (
-  userId: string | string[] | undefined,
-  callback: (err: any, results: any) => void,
-) => {
+const promoteToJury = async (userId: string | string[] | undefined) => {
   const query =
     "INSERT INTO role_user (user_id, role_id) VALUES (?, (SELECT id FROM role WHERE name = 'JURY'))";
-  db.query(query, userId, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, userId);
+  return results;
 };
 
-const updateToAdmin = (
-  userId: string | string[] | undefined,
-  callback: (err: any, results: any) => void,
-) => {
+const updateToAdmin = async (userId: string | string[] | undefined) => {
   const query = `
     UPDATE role_user
     SET role_id = (SELECT id FROM role WHERE name = 'ADMIN')
     WHERE user_id = ?
   `;
-  db.query(query, userId, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, userId);
+  return results;
 };
 
-const updateToJury = (
-  userId: string | string[] | undefined,
-  callback: (err: any, results: any) => void,
-) => {
+const updateToJury = async (userId: string | string[] | undefined) => {
   const query = `
     UPDATE role_user
     SET role_id = (SELECT id FROM role WHERE name = 'JURY')
     WHERE user_id = ?
   `;
-  db.query(query, userId, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query, userId);
+  return results;
 };
 
-const getAllUsers = (callback: (err: any, results: any) => void) => {
+const getAllUsers = async () => {
   const query = `
     SELECT u.id, u.firstname, u.lastname, u.email, GROUP_CONCAT(r.name) AS role
     FROM user u
@@ -75,9 +54,8 @@ const getAllUsers = (callback: (err: any, results: any) => void) => {
     LEFT JOIN role r ON ru.role_id = r.id
     GROUP BY u.id
   `;
-  db.query(query, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [results] = await db.query(query);
+  return results;
 };
 
 export default {

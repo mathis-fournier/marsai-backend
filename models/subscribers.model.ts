@@ -1,51 +1,28 @@
-const db = require("../config/database");
+import { db } from "../config/database";
 
-function getSubscribersByEmail(
-  email: string,
-  callback: (err: any, results?: any) => void,
-): void {
+const getSubscribersByEmail = async (email: string) => {
   const query = "SELECT * FROM subscriber WHERE email = ?";
-  db.query(query, [email], (err: any, results: any) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, results);
-  });
-}
-function getAllSubscribers(callback: (err: any, results?: any) => void): void {
-  const query = "SELECT * FROM subscriber";
-  db.query(query, (err: any, results: any) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, results);
-  });
-}
-function addSubscriber(
-  email: string,
-  callback: (err: any, results?: any) => void,
-): void {
-  const query = "INSERT INTO subscriber (email) VALUES (?)";
-  db.query(query, [email], (err: any, results: any) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, results);
-  });
-}
+  const [rows] = await db.query(query, [email]);
+  return rows;
+};
 
-function removeSubscriber(
-  email: string,
-  callback: (err: any, results?: any) => void,
-): void {
+const getAllSubscribers = async () => {
+  const query = "SELECT * FROM subscriber";
+  const [rows] = await db.query(query);
+  return rows;
+};
+
+const addSubscriber = async (email: string) => {
+  const query = "INSERT INTO subscriber (email) VALUES (?)";
+  const [result] = await db.query(query, [email]);
+  return result;
+};
+
+const removeSubscriber = async (email: string) => {
   const query = "DELETE FROM subscriber WHERE email = ?";
-  db.query(query, [email], (err: any, results: any) => {
-    if (err) {
-      return callback(err);
-    }
-    callback(null, results);
-  });
-}
+  const [result] = await db.query(query, [email]);
+  return result;
+};
 
 export default {
   addSubscriber,

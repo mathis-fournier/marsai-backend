@@ -1,14 +1,9 @@
-const db = require("../config/database");
+import { db } from "../config/database";
 
-const getRatingCount = (callback: (err: any, results: any) => void) => {
+const getRatingCount = async () => {
   const query = "SELECT COUNT(*) as total FROM rating";
-  db.query(query, (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    const total = results[0].total;
-    callback(null, total);
-  });
+  const [rows]: any = await db.query(query);
+  return rows[0].total;
 };
 
 export default { getRatingCount };
