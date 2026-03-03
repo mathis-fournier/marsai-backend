@@ -1,10 +1,10 @@
-import "dotenv/config";
-import "./config/database";
-import express, { Request, Response, Application } from "express";
-import path from "path";
-import cors, { CorsOptions } from "cors";
+import "dotenv/config"; // Charger les variables d'environnement
+import { connect } from "./config/database"; // Importer la fonction de connexion à la base de données
+import express, { Request, Response, Application } from "express"; // Importer Express
+import path from "path"; // Pour gérer les chemins de fichiers
+import cors, { CorsOptions } from "cors"; // Pour gérer les requêtes CORS
 
-// Import Routes
+// Importer les routes
 import movieRoutes from "./routes/movies.routes";
 import eventsRoutes from "./routes/events.routes";
 import authRoutes from "./routes/auth.routes";
@@ -14,59 +14,74 @@ import subscribersRoutes from "./routes/subscribers.routes";
 import newsletterRoutes from "./routes/newsletters.routes";
 import tagsRoutes from "./routes/tags.routes";
 
-const app = express();
+// Initialiser l'application Express
+const app: Application = express();
 
+// Middleware : Parser les requêtes JSON
 app.use(express.json());
 
-const whitelist: (string | undefined)[] = [process.env.FRONT_URL];
+// Configuration CORS
+const whitelist: (string | undefined)[] = [process.env.FRONT_URL]; // Liste des origines autorisées
 
 const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like Postman or mobile apps)
-    if (!origin) {
-      return callback(null, true);
-    }
+    // Autoriser les requêtes sans origine (Postman, apps mobiles)
+    if (!origin) return callback(null, true);
 
-    // Check if origin is in whitelist
-    if (whitelist.includes(origin)) {
-      return callback(null, true);
-    }
+    // Vérifier si l'origine est dans la liste blanche
+    if (whitelist.includes(origin)) return callback(null, true);
 
-    // Autoriser les adresses IP locales pour le développement mobile
+    // Autoriser les adresses IP locales pour le développement
     if (
       origin.startsWith("http://localhost") ||
       origin.startsWith("http://192.168.")
-    ) {
+    )
       return callback(null, true);
-    }
 
-    // Ajouter une condition pour autoriser l'origine de développement React
-    if (origin === "http://localhost:5173") {
-      // Remplacez 5173 par le port réel de votre application React
-      return callback(null, true);
-    }
+    // Autoriser l'origine de développement React (ex: http://localhost:5173)
+    if (origin === "http://localhost:5173") return callback(null, true);
 
-    callback(new Error("Not allowed by CORS"));
+    callback(new Error("Not allowed by CORS")); // Bloquer les autres origines
   },
-  credentials: true,
+  credentials: true, // Autoriser les cookies et les en-têtes d'authentification
 };
 
+// Appliquer le middleware CORS
 app.use(cors(corsOptions));
 
+// Définir les routes
 app.use("/events", eventsRoutes);
 app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
-app.use("/newsletter", subscribersRoutes);
 app.use("/jury", juryRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use("/newsletter", subscribersRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "/uploads"))); // Fichiers uploadés
 app.use("/subscribers", subscribersRoutes);
 app.use("/newsletters", newsletterRoutes);
 app.use("/tags", tagsRoutes);
 
-// Server setup
-const PORT = process.env.PORT || 3000;
+// Fonction principale pour démarrer le serveur
+async function startServer() {
+  try {
+    // Étape 1 : Connexion à la base de données
+    await connect(); // Attendre que la connexion soit réussie
+    console.log("✅ Connexion à la base de données réussie");
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+    // Étape 2 : Démarrer le serveur
+    const PORT = process.env.PORT || 3000; // Utiliser le port de l'environnement ou 3000 par défaut
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur démarré sur le port ${PORT}`);
+    });
+  } catch (error: any) {
+    // Étape 3 : Gérer les erreurs de connexion
+    console.error(
+      "❌ Échec de la connexion à la base de données:",
+      error.message,
+    );
+    process.exit(1); // Arrêter le processus en cas d'erreur
+  }
+}
+
+// Lancer le serveur
+startServer();

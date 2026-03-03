@@ -1,125 +1,90 @@
-const db = require("../config/database");
 import { Request, Response } from "express";
 import adminModel from "../models/admin.model";
 import authModel from "../models/auth.model";
 
-/**
- * Contrôleur pour supprimer un événement spécifique.
- * Utilise le modèle 'adminModel' pour exécuter la requête SQL de suppression.
- */
-const deleteEvent = (req: Request, res: Response) => {
+const deleteEvent = async (req: Request, res: Response) => {
   const { id } = req.params;
-  adminModel.deleteEvent(id, (err: any, results: any) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+  try {
+    const results = await adminModel.deleteEvent(id);
     res.json(results);
-  });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-/**
- * Contrôleur pour récupérer la liste de tous les utilisateurs.
- * Utilise le modèle 'adminModel' pour récupérer les données depuis la base de données.
- */
-const getAllUsers = (req: Request, res: Response) => {
-  adminModel.getAllUsers((error: Error, results: any) => {
-    if (error) {
-      return res.status(500).send("Erreur serveur");
-    }
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const results = await adminModel.getAllUsers();
     res.json(results);
-  });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-/**
- * Contrôleur pour promouvoir un utilisateur au rôle d'administrateur.
- * Le processus vérifie d'abord si l'utilisateur existe, s'il est déjà administrateur,
- * ou s'il est déjà jury pour choisir la méthode appropriée de mise à jour dans la base de données.
- */
-const promoteToAdmin = (req: Request, res: Response) => {
+const promoteToAdmin = async (req: Request, res: Response) => {
   const { userId } = req.params;
-  authModel.getUserById(userId, (error: Error, user: any) => {
-    if (error) {
-      return res.status(500).send("Erreur serveur");
-    }
+  if (!userId || isNaN(Number(userId))) {
+    return res.status(400).json({ error: "ID utilisateur invalide" });
+  }
+  try {
+    const user = await authModel.getUserById(Number(userId));
     if (!user) {
-      return res.status(404).send("Utilisateur non trouvé");
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
     if (user.role === "ADMIN") {
-      return res.status(400).send("L'utilisateur est déjà un administrateur");
+      return res
+        .status(400)
+        .json({ error: "L'utilisateur est déjà un administrateur" });
     } else if (user.role === "JURY") {
-      adminModel.updateToAdmin(userId, (error: Error, results: any) => {
-        if (error) {
-          return res.status(500).send("Erreur serveur");
-        }
-        res.json(results);
-      });
+      const results = await adminModel.updateToAdmin(userId);
+      res.json(results);
     } else {
-      adminModel.promoteToAdmin(userId, (error: Error, results: any) => {
-        if (error) {
-          return res.status(500).send("Erreur serveur");
-        }
-        res.json(results);
-      });
+      const results = await adminModel.promoteToAdmin(userId);
+      res.json(results);
     }
-  });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-/**
- * Contrôleur pour promouvoir un utilisateur au rôle de jury.
- * Le processus suit une logique similaire à promoteToAdmin pour gérer les différents rôles existants.
- */
-const promoteToJury = (req: Request, res: Response) => {
+const promoteToJury = async (req: Request, res: Response) => {
   const { userId } = req.params;
-
-  if (!userId) {
-    return res.status(400).send("ID utilisateur manquant");
+  if (!userId || isNaN(Number(userId))) {
+    return res.status(400).json({ error: "ID utilisateur invalide" });
   }
-
-  authModel.getUserById(userId, (error: Error, user: any) => {
-    if (error) {
-      return res.status(500).send("Erreur serveur");
-    }
+  try {
+    const user = await authModel.getUserById(Number(userId));
     if (!user) {
-      return res.status(404).send("Utilisateur non trouvé");
+      return res.status(404).json({ error: "Utilisateur non trouvé" });
     }
     if (user.role === "JURY") {
-      return res.status(400).send("L'utilisateur est déjà un jury");
+      return res.status(400).json({ error: "L'utilisateur est déjà un jury" });
     } else if (user.role === "ADMIN") {
-      adminModel.updateToJury(userId, (error: Error, results: any) => {
-        if (error) {
-          return res.status(500).send("Erreur serveur");
-        }
-        res.json(results);
-      });
+      const results = await adminModel.updateToJury(userId);
+      res.json(results);
     } else {
-      adminModel.promoteToJury(userId, (error: Error, results: any) => {
-        if (error) {
-          return res.status(500).send("Erreur serveur");
-        }
-        res.json(results);
-      });
+      const results = await adminModel.promoteToJury(userId);
+      res.json(results);
     }
-  });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 };
 
-/**
- * Contrôleur pour supprimer un utilisateur spécifique.
- * Utilise le modèle 'adminModel' pour effectuer la suppression en base de données.
- */
-const deleteUser = (req: Request, res: Response) => {
+const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
-  adminModel.deleteUser(id, (error: Error, results: any) => {
-    if (error) {
-      return res.status(500).send("Erreur serveur");
-    }
+  try {
+    const results = await adminModel.deleteUser(id);
     res.json(results);
-  });
+  } catch (err) {
+    res.status(500).send("Erreur serveur");
+  }
 };
 
 export default {
   deleteEvent,
+  getAllUsers,
   promoteToAdmin,
   promoteToJury,
-  getAllUsers,
   deleteUser,
 };

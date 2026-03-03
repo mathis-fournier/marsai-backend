@@ -1,35 +1,27 @@
+import { db } from "../config/database";
 import { Event } from "../interfaces/event.interfaces";
-const db = require("../config/database");
 
-const getAll = (callback: (err: any, results: any) => void) => {
+const getAll = async (): Promise<any> => {
   const query = "SELECT * FROM event";
-  db.query(query, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query);
+  return rows;
 };
 
-const getOne = (data: any, callback: (err: any, results: any) => void) => {
+const getOne = async (data: any): Promise<any> => {
   const query = "SELECT * FROM event WHERE id = ?";
-  db.query(query, data, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows]: any = await db.query(query, data);
+  return rows[0];
 };
 
-const getParticipantSum = (callback: (err: any, results: any) => void) => {
+const getParticipantSum = async (): Promise<number> => {
   const query = "SELECT COUNT(*) as total FROM participant";
-  db.query(query, (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    const total = results[0].total;
-    callback(null, total);
-  });
+  const [rows]: any = await db.query(query);
+  return rows[0].total;
 };
 
-const addEvent = (data: Event, callback: (err: any, results: any) => void) => {
+const addEvent = async (data: Event): Promise<any> => {
   const query =
     "INSERT INTO event (title, description, status, start_at, duration, location, created_at, updated_at, published_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
   const values = [
     data.title,
     data.description,
@@ -42,68 +34,85 @@ const addEvent = (data: Event, callback: (err: any, results: any) => void) => {
     data.published_at,
   ];
 
-  db.query(query, values, (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    callback(err, results);
-  });
+  const [result] = await db.query(query, values);
+  return result;
 };
 
-const deleteOne = (data: any, callback: (err: any, results: any) => void) => {
+const deleteOne = async (data: any): Promise<any> => {
   const query = "DELETE FROM event WHERE id = ?";
-  db.query(query, data, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [result] = await db.query(query, data);
+  return result;
 };
 
-const getReservations = (callback: (err: any, results: any) => void) => {
+const getReservations = async (): Promise<any> => {
   const query =
     "SELECT e.id AS event_id, e.title, p.id AS participant_id, p.firstname, b.booked_at FROM booking b JOIN event e ON b.event_id = e.id JOIN participant p ON b.participant_id = p.id";
-  db.query(query, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query);
+  return rows;
 };
 
-const addParticipant = (
-  data: any,
-  callback: (err: any, results: any) => void,
-) => {
+const addParticipant = async (data: any): Promise<any> => {
   const query =
     "INSERT INTO participant (firstname, lastname, email) VALUES (?, ?, ?)";
   const values = [data.firstname, data.lastname, data.email];
-  db.query(query, values, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [result] = await db.query(query, values);
+  return result;
 };
 
-const addBooking = (data: any, callback: (err: any, results: any) => void) => {
-  const participantQuery =
-    "INSERT INTO participant (firstname, lastname, email) VALUES (?, ?, ?)";
-  const participantValues = [data.firstname, data.lastname, data.email];
+const findParticipantByEmail = async (
+  email: string,
+): Promise<number | null> => {
+  const query = "SELECT id FROM participant WHERE email = ?";
+  const [rows]: any = await db.query(query, [email]);
 
-  db.query(
-    participantQuery,
-    participantValues,
-    (err: any, participantResult: any) => {
-      if (err) return callback(err, null);
+  if (rows.length > 0) {
+    return rows[0].id;
+  }
 
-      const newParticipantId = participantResult.insertId;
+  return null;
+};
 
-      const bookingQuery =
-        "INSERT INTO booking (participant_id, event_id, booked_at) VALUES (?, ?, NOW())";
-      const bookingValues = [newParticipantId, data.event_id];
+const addBooking = async (data: any): Promise<any> => {
+  const email = data.participant.email;
+  const participantId = await findParticipantByEmail(email);
 
-      db.query(bookingQuery, bookingValues, (err: any, bookingResult: any) => {
-        if (err) return callback(err, null);
+  if (!participantId) {
+    // Insérer le participant si inexistant
+    const participantQuery =
+      "INSERT INTO participant (firstname, lastname, email) VALUES (?, ?, ?)";
+    const participantValues = [
+      data.participant.firstname,
+      data.participant.lastname,
+      data.participant.email,
+    ];
+    const [participantResult]: any = await db.query(
+      participantQuery,
+      participantValues,
+    );
+    const newParticipantId = participantResult.insertId;
 
-        callback(null, {
-          participantId: newParticipantId,
-          bookingId: bookingResult.insertId,
-        });
-      });
-    },
-  );
+    // Puis insérer la réservation
+    const bookingQuery =
+      "INSERT INTO booking (participant_id, event_id, booked_at) VALUES (?, ?, NOW())";
+    const bookingValues = [newParticipantId, data.event_id];
+    const [bookingResult]: any = await db.query(bookingQuery, bookingValues);
+
+    return {
+      participantId: newParticipantId,
+      bookingId: bookingResult.insertId,
+    };
+  } else {
+    // Utiliser l'ID existant
+    const bookingQuery =
+      "INSERT INTO booking (participant_id, event_id, booked_at) VALUES (?, ?, NOW())";
+    const bookingValues = [participantId, data.event_id];
+    const [bookingResult]: any = await db.query(bookingQuery, bookingValues);
+
+    return {
+      participantId,
+      bookingId: bookingResult.insertId,
+    };
+  }
 };
 
 export default {
@@ -115,4 +124,5 @@ export default {
   getReservations,
   addParticipant,
   addBooking,
+  findParticipantByEmail,
 };

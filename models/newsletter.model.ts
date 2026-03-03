@@ -1,35 +1,27 @@
-const db = require("../config/database");
+import { db } from "../config/database";
 
-function addNewsletter(
-  { object, content }: { object: string; content: string },
-  callback: (err: any, results: any) => void,
-) {
+const addNewsletter = async ({
+  object,
+  content,
+}: {
+  object: string;
+  content: string;
+}) => {
   const query = "INSERT INTO newsletter (object, content) VALUES(?, ?)";
-  db.query(query, [object, content], (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    callback(err, results);
-  });
-}
+  const [result] = await db.query(query, [object, content]);
+  return result;
+};
 
-function getAllNewsletters(callback: (err: Error, results: any) => void) {
+const getAllNewsletters = async () => {
   const query = "SELECT * FROM newsletter";
-  db.query(query, [], (err: Error, results: any) => {
-    if (err) return callback(err, null);
-    callback(err, results);
-  });
-}
+  const [rows] = await db.query(query);
+  return rows;
+};
 
-function getNewsletterById(
-  newsletterId: string,
-  callback: (error: Error, results: any) => void,
-) {
+const getNewsletterById = async (newsletterId: string) => {
   const query = "SELECT * FROM newsletter WHERE id = ?";
-  db.query(query, [newsletterId], (error: Error, results: any) => {
-    if (error) return callback(error, null);
-    callback(error, results);
-  });
-}
+  const [rows]: any = await db.query(query, [newsletterId]);
+  return rows[0];
+};
 
 export default { addNewsletter, getAllNewsletters, getNewsletterById };

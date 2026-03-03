@@ -138,9 +138,9 @@ CREATE TABLE event (
 DROP TABLE IF EXISTS participant;
 CREATE TABLE participant (
     id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
-    firstname VARCHAR(100),
-    lastname VARCHAR(100),
-    email VARCHAR(100)
+    firstname VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL
 );
 
 -- Table: booking

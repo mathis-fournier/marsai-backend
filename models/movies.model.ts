@@ -1,46 +1,21 @@
-const db = require("../config/database");
+import { db } from "../config/database";
 import { Tag } from "../interfaces/tag.interface";
 import * as moviesInterfaces from "../interfaces/movies.interfaces";
 import { Collaborator } from "../interfaces/collaborator.interface";
 
-const executeQuery = (query: string, params: any[] = []): Promise<any> => {
-  return new Promise((resolve, reject) => {
-    db.query(query, params, (err: any, results: any) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(results);
-      }
-    });
-  });
-};
-
-const postMovie = (
-  data: moviesInterfaces.Movie,
-  callback: (err: any, results: any) => void,
-) => {
+const postMovie = async (data: moviesInterfaces.Movie) => {
   const query = "INSERT INTO movie SET ?";
-  db.query(query, data, (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [result] = await db.query(query, [data]);
+  return result;
 };
 
-const getAllMovies = (
-  limit: number,
-  offset: number,
-  callback: (err: any, results: moviesInterfaces.Movie[]) => void,
-) => {
+const getAllMovies = async (limit: number, offset: number) => {
   const query = "SELECT * FROM movie LIMIT ? OFFSET ?";
-  db.query(query, [limit, offset], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query, [limit, offset]);
+  return rows;
 };
 
-const getBestMovies = (
-  limit: number,
-  offset: number,
-  callback: (err: any, results: moviesInterfaces.Movie[]) => void,
-) => {
+const getBestMovies = async (limit: number, offset: number) => {
   const query = `
     SELECT m.*, AVG(r.note) AS average_rating
     FROM movie AS m
@@ -48,9 +23,8 @@ const getBestMovies = (
     GROUP BY m.id
     ORDER BY average_rating DESC
     LIMIT ? OFFSET ?`;
-  db.query(query, [limit, offset], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query, [limit, offset]);
+  return rows;
 };
 
 const getSelectedMovies = async (
@@ -58,13 +32,8 @@ const getSelectedMovies = async (
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Accepted' LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films acceptés : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
 
 const getSelectedMoviesByTag = async (
@@ -73,373 +42,234 @@ const getSelectedMoviesByTag = async (
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT * FROM movie JOIN movie_tag ON movie_tag.movie_id = movie.id WHERE movie_tag.tag_id = ? AND movie.status = 'Accepted' LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films acceptés : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getPendingMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Pending' LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films en attente : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getPendingMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Pending' LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films en attente : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getPendingHybridMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Pending' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides en attente : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getPendingFullAIMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Pending' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI en attente : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getPendingHybridMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Pending' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films en attente : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getPendingFullAIMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Pending' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films en attente : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getSelectedHybridMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Accepted' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films acceptés : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getSelectedFullAIMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Accepted' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films acceptés : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getSelectedHybridMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Accepted' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides acceptés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getSelectedFullAIMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Accepted' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI acceptés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getRejectedHybridMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Cancelled' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides rejetés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getRejectedFullAIMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Cancelled' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI rejetés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getRejectedHybridMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Cancelled' AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides rejetés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getRejectedFullAIMoviesByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m JOIN movie_tag ON movie_tag.movie_id = m.id WHERE movie_tag.tag_id = ? AND m.status = 'Cancelled' AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI rejetés : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
 
-const getMoviesSum = (callback: (err: any, results: number) => void) => {
+const getMoviesSum = async () => {
   const query = "SELECT COUNT(*) as total FROM movie";
-  db.query(query, (err: any, results: any) => {
-    if (err) {
-      return callback(err, 0);
-    }
-    const total = results[0].total;
-    callback(null, total);
-  });
+  const [rows]: any = await db.query(query);
+  return rows[0].total;
 };
 
-const getMovieDetails = (
-  movieId: number | undefined,
-  callback: (err: any, results: moviesInterfaces.Movie) => void,
-) => {
+const getMovieDetails = async (movieId: number | undefined) => {
   const query = "SELECT * FROM movie m WHERE m.id = ?";
-  db.query(query, [movieId], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows]: any = await db.query(query, [movieId]);
+  return rows[0];
 };
 
-const getMovieCollaborators = (
-  movieId: number | undefined,
-  callback: (err: any, results: Collaborator[]) => void,
-) => {
+const getMovieCollaborators = async (movieId: number | undefined) => {
   const query = "SELECT * FROM collaborator WHERE movie_id = ?";
-  db.query(query, [movieId], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query, [movieId]);
+  return rows;
 };
 
-const getMovieRatings = (
-  movieId: number,
-  callback: (err: any, results: moviesInterfaces.RatingData[]) => void,
-) => {
+const getMovieRatings = async (movieId: number) => {
   const query = "SELECT * FROM rating WHERE movie_id = ?";
-  db.query(query, [movieId], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [rows] = await db.query(query, [movieId]);
+  return rows;
 };
 
-const postMovieRating = (
-  ratingData: moviesInterfaces.RatingData,
-  callback: (err: any, results: any) => void,
-) => {
+const postMovieRating = async (ratingData: moviesInterfaces.RatingData) => {
   const sql = "INSERT INTO rating SET ?";
-  db.query(sql, [ratingData], (err: any, results: any) => {
-    callback(err, results);
-  });
+  const [result] = await db.query(sql, [ratingData]);
+  return result;
 };
 
-const getMovieTags = (
-  movieId: number,
-  callback: (err: any, results: Tag[]) => void,
-) => {
+const getMovieTags = async (movieId: number) => {
   const query = `
     SELECT t.name
     FROM movie_tag mt
     JOIN tag t ON mt.tag_id = t.id
     WHERE mt.movie_id = ?
   `;
-  db.query(query, [movieId], (err: any, results: any) => {
-    if (err) callback(err, []);
-    else callback(err, results);
-  });
+  const [rows] = await db.query(query, [movieId]);
+  return rows;
 };
 
-const getDirectorsSum = (callback: (err: any, results: number) => void) => {
+const getDirectorsSum = async () => {
   const query = "SELECT COUNT(*) as total FROM collaborator";
-  db.query(query, (err: any, results: any) => {
-    if (err) {
-      return callback(err, 0);
-    }
-    const total = results[0].total;
-    callback(null, total);
-  });
+  const [rows]: any = await db.query(query);
+  return rows[0].total;
 };
 
-const changeMovieStatus = (
-  [status, id]: any,
-  callback: (err: any, results: any) => void,
-) => {
+const changeMovieStatus = async ([status, id]: any) => {
   const query = "UPDATE movie SET status = ? WHERE id = ?";
-  db.query(query, [status, id], (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    callback(err, results);
-  });
+  const [result] = await db.query(query, [status, id]);
+  return result;
 };
-function getAllMoviesByTag(
-  tag: number,
-  limit: number,
-  offset: number,
-  callback: (err: Error | null, results: any) => void,
-) {
+
+async function getAllMoviesByTag(tag: number, limit: number, offset: number) {
   const query =
     "SELECT movie.* FROM movie JOIN movie_tag ON movie_tag.movie_id = movie.id WHERE movie_tag.tag_id = ? LIMIT ? OFFSET ?";
-  db.query(query, [tag, limit, offset], (err: any, results: any) => {
-    if (err) return callback(err, null);
-    callback(null, results);
-  });
+  const [rows] = await db.query(query, [tag, limit, offset]);
+  return rows;
 }
 
-function getAllMoviesByLimit(
-  limit: number,
-  offset: number,
-  callback: (err: Error | null, results: any) => void,
-) {
+async function getAllMoviesByLimit(limit: number, offset: number) {
   const query = "SELECT movie.* FROM movie LIMIT ? OFFSET ?";
-  db.query(query, [limit, offset], (err: any, results: any) => {
-    if (err) {
-      return callback(err, null);
-    }
-    callback(null, results);
-  });
+  const [rows] = await db.query(query, [limit, offset]);
+  return rows;
 }
+
 const getRejectedMovies = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT m.* FROM movie AS m WHERE m.status = 'Cancelled' LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films annulés : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getRejectedMoviesCount = async (): Promise<{ total: number }[]> => {
-  const query = `SELECT COUNT(*) as total FROM movie WHERE movie.status = 'Cancelled'`;
-  try {
-    return await executeQuery(query);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films annulés : " + error.message,
-    );
-  }
+  const query = `SELECT COUNT(*) as total FROM movie WHERE movie.status = 'Accepted'`;
+  const [rows]: any = await db.query(query);
+  return rows;
 };
+
 const getHybridCount = async (): Promise<{ total: number }[]> => {
   const query = `SELECT COUNT(*) as total FROM movie WHERE movie.is_hybrid = true`;
-  try {
-    return await executeQuery(query);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération du nombre de films hybrides : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query);
+  return rows;
 };
+
 const getFullAICount = async (): Promise<{ total: number }[]> => {
   const query = `SELECT COUNT(*) as total FROM movie WHERE movie.is_hybrid = false`;
-  try {
-    return await executeQuery(query);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération du nombre de films full AI : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query);
+  return rows;
 };
 
 const getHybrid = async (
@@ -447,13 +277,8 @@ const getHybrid = async (
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT * FROM movie WHERE is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
 
 const getHybridByTag = async (
@@ -462,43 +287,29 @@ const getHybridByTag = async (
   tag: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT * FROM movie JOIN movie_tag ON movie_tag.movie_id = movie.id WHERE movie_tag.tag_id = ? AND is_hybrid = true LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films hybrides par tag : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 const getFullAI = async (
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT * FROM movie WHERE is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI : " + error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [limit, offset]);
+  return rows;
 };
+
 const getFullAIByTag = async (
   tag: number,
   limit: number,
   offset: number,
 ): Promise<moviesInterfaces.Movie[]> => {
   const query = `SELECT * FROM movie JOIN movie_tag ON movie_tag.movie_id = movie.id WHERE movie_tag.tag_id = ? AND is_hybrid = false LIMIT ? OFFSET ?`;
-  try {
-    return await executeQuery(query, [tag, limit, offset]);
-  } catch (error: any) {
-    throw new Error(
-      "Erreur lors de la récupération des films full AI par tag : " +
-        error.message,
-    );
-  }
+  const [rows]: any = await db.query(query, [tag, limit, offset]);
+  return rows;
 };
+
 export default {
   postMovie,
   getAllMovies,

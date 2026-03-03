@@ -1,4 +1,5 @@
-import mysql from "mysql2";
+// config/database.ts
+import mysql from "mysql2/promise";
 
 const { DB_HOST, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 
@@ -9,21 +10,26 @@ if (!DB_HOST || !DB_USER || !DB_NAME) {
   process.exit(1);
 }
 
-const connection = mysql.createConnection({
+const db = mysql.createPool({
   host: DB_HOST as string,
   user: DB_USER as string,
   password: DB_PASSWORD as string,
-  database: DB_NAME as string,
+  database: DB_NAME,
   port: Number(process.env.DB_PORT),
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
 // Test de connexion
-connection.connect((error) => {
-  if (error) {
+async function connect() {
+  try {
+    const connection = await db.getConnection();
+    console.log("Connecté à la base de données MySQL");
+    connection.release();
+  } catch (error: any) {
     console.error("Erreur de connexion à MySQL :", error.message);
-    return;
   }
-  console.log("Connecté à la base de données MySQL");
-});
+}
 
-module.exports = connection;
+export { db, connect };
